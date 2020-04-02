@@ -12,7 +12,7 @@ import (
 func main() {
 	// DB初始化、数据模型自动迁移
 	models.Init()
-	// 初始化
+	// router初始化
 	router := routers.Init()
 	router.Run(configHelper.HTTPPort)
 }

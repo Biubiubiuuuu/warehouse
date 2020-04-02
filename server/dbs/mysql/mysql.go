@@ -46,6 +46,7 @@ func InitDB() *gorm.DB {
 	}
 	// set Singular Table
 	db.SingularTable(true)
+	db.LogMode(true)
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return fmt.Sprintf("%v%v", tablePrefix, defaultTableName)
 	}

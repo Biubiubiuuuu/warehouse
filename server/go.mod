@@ -31,6 +31,7 @@ require (
 	github.com/go-ini/ini v1.55.0
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.12
+	github.com/satori/go.uuid v1.2.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
 )

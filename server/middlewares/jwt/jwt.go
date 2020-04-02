@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Biubiubiuuuu/warehouse/server/common/response"
-	"github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
+	tcode "github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/helpers/jwtHelper"
 	"github.com/gin-gonic/gin"
@@ -17,34 +17,34 @@ import (
 // param header "Authorization"
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		code := code.SUCCESS
+		code := tcode.SUCCESS
 		token := c.Query("token")
 		if token == "" {
 			authToken := c.GetHeader("Authorization")
 			if authToken == "" {
-				code = code.AUTH_NOT_BEARER
+				code = tcode.AUTH_NOT_BEARER
 				return
 			}
 			authToken = strings.TrimSpace(authToken)
 			claims, err := jwtHelper.ParseToken(authToken)
 			if err != nil {
-				code = e.TOKEN_AUTH_ERROR
+				code = tcode.TOKEN_AUTH_ERROR
 				return
-			} 
-		  if time.Now().Unix() > claims.ExpiresAt {
-				code = e.TOKEN_TIMEOUT
+			}
+			if time.Now().Unix() > claims.ExpiresAt {
+				code = tcode.TOKEN_TIMEOUT
 			}
 		} else {
 			claims, err := jwtHelper.ParseToken(token)
 			if err != nil {
-				code = e.TOKEN_AUTH_ERROR
+				code = tcode.TOKEN_AUTH_ERROR
 				return
-			} 
+			}
 			if time.Now().Unix() > claims.ExpiresAt {
-				code = e.TOKEN_TIMEOUT
+				code = tcode.TOKEN_TIMEOUT
 			}
 		}
-		if code != code.SUCCESS {
+		if code != tcode.SUCCESS {
 			message := msg.GetMsg(code)
 			responseJson := response.ResponseJson(false, nil, message)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, responseJson)

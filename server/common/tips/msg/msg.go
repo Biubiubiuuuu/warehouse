@@ -12,6 +12,10 @@ var MsgFlags = map[int]string{
 	c.TOKEN_AUTH_ERROR: "token错误",
 	c.TOKEN_TIMEOUT:    "token已过期",
 	c.AUTH_NOT_BEARER:  "Query not 'token' param OR header Authorization has not Bearer token",
+	c.USERNAME_EXIST:   "用户名已存在",
+	c.PARAMETER_ERROR:  "参数错误",
+	c.NOTNULL:          "用户名或密码不能为空",
+	c.NOTADMINISTRATOR: "没有权限操作",
 }
 
 // get return msg

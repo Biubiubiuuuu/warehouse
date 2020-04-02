@@ -1,9 +1,12 @@
 package routers
 
 import (
+	"github.com/Biubiubiuuuu/warehouse/server/controllers/adminController"
 	"github.com/Biubiubiuuuu/warehouse/server/docs"
 	"github.com/Biubiubiuuuu/warehouse/server/helpers/configHelper"
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/cross"
+	err "github.com/Biubiubiuuuu/warehouse/server/middlewares/error"
+	"github.com/Biubiubiuuuu/warehouse/server/middlewares/jwt"
 	"github.com/gin-gonic/gin"
 	ginswagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -28,14 +31,21 @@ func Init() *gin.Engine {
 	//gin swaager
 	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))
 	//404
-	//router.NoRoute(err.NotFound)
+	router.NoRoute(err.NotFound)
 	return router
 }
 
 // init admin
 func InitAdmin(router *gin.Engine) {
 	//管理员路由分组
-	//apiAdmin := router.Group("/api/v1/admin")
+	apiAdmin := router.Group("/api/v1/admin")
+	// 管理员 get post update delete...
+	apiAdmin.POST("Login", adminController.LoginAdmin)
+	//管理员 需要登录授权并验证token的request 多个验证用,分开
+	apiAdmin.Use(jwt.JWT())
+	{
+		apiAdmin.POST("addAdmin", adminController.AddAdmin)
+	}
 }
 
 // init user

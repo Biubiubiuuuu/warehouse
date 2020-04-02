@@ -1,4 +1,27 @@
 basePath: '{{.BasePath}}'
+definitions:
+  adminController.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  adminController.Register:
+    properties:
+      administrator:
+        description: 超级管理员 Y | N
+        type: string
+      online_username:
+        description: 当前登录用户名
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
 host: '{{.Host}}'
 info:
   contact: {}
@@ -6,7 +29,57 @@ info:
   license: {}
   title: '{{.Title}}'
   version: '{{.Version}}'
-paths: {}
+paths:
+  /api/v1/admin/Login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/adminController.Login'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
+            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 管理员登录
+      tags:
+      - 管理员
+  /api/v1/admin/addAdmin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/adminController.Register'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
+            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 添加管理员
+      tags:
+      - 管理员
 securityDefinitions:
   ApiKeyAuth:
     in: header
