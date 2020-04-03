@@ -1,4 +1,4 @@
-package response
+package entity
 
 type ResponseData struct {
 	Status  bool                   `json:"status"`
@@ -11,5 +11,8 @@ type ResponseData struct {
 // {"status":true,"data":nil,"message":""}
 // {"status":false,"data":nil,"message":""}
 func ResponseJson(status bool, data map[string]interface{}, message string) (responseData ResponseData) {
-	return ResponseData{Status: status, Data: data, Message: message}
+	responseData.Status = status
+	responseData.Data = data
+	responseData.Message = message
+	return responseData
 }

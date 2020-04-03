@@ -57,7 +57,7 @@ func (a *Admin) QueryByUsername() bool {
 // 检查用户权限
 func (a *Admin) CheckAdministrator() bool {
 	db := mysql.GetDB()
-	if err := db.Where("username = ? AND administrator = Y", a.Username).First(&a).Error; err != nil {
+	if err := db.Where("username = ? AND administrator = ?", a.Username, "Y").First(&a).Error; err != nil {
 		return false
 	}
 	return true

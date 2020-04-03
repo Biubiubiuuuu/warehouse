@@ -16,6 +16,7 @@ var MsgFlags = map[int]string{
 	c.PARAMETER_ERROR:  "参数错误",
 	c.NOTNULL:          "用户名或密码不能为空",
 	c.NOTADMINISTRATOR: "没有权限操作",
+	c.NOTMORE:          "没有更多了~",
 }
 
 // get return msg

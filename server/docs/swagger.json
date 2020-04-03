@@ -12,11 +12,6 @@
     "paths": {
         "/api/v1/admin/Login": {
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -35,7 +30,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/adminController.Login"
+                            "$ref": "#/definitions/entity.Login"
                         }
                     }
                 ],
@@ -74,7 +69,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/adminController.Register"
+                            "$ref": "#/definitions/entity.Register"
                         }
                     }
                 ],
@@ -90,7 +85,7 @@
         }
     },
     "definitions": {
-        "adminController.Login": {
+        "entity.Login": {
             "type": "object",
             "properties": {
                 "password": {
@@ -101,7 +96,7 @@
                 }
             }
         },
-        "adminController.Register": {
+        "entity.Register": {
             "type": "object",
             "properties": {
                 "administrator": {

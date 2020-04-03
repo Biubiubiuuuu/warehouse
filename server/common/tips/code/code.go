@@ -12,4 +12,5 @@ const (
 	PARAMETER_ERROR  = -10006
 	NOTNULL          = -10007
 	NOTADMINISTRATOR = -10008
+	NOTMORE          = -10009
 )

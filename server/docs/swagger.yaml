@@ -1,13 +1,13 @@
 basePath: '{{.BasePath}}'
 definitions:
-  adminController.Login:
+  entity.Login:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  adminController.Register:
+  entity.Register:
     properties:
       administrator:
         description: 超级管理员 Y | N
@@ -40,7 +40,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/adminController.Login'
+          $ref: '#/definitions/entity.Login'
           type: object
       produces:
       - application/json
@@ -50,8 +50,6 @@ paths:
             "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
           schema:
             type: string
-      security:
-      - ApiKeyAuth: []
       summary: 管理员登录
       tags:
       - 管理员
@@ -65,7 +63,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/adminController.Register'
+          $ref: '#/definitions/entity.Register'
           type: object
       produces:
       - application/json

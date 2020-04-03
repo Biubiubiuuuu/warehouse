@@ -23,7 +23,7 @@ func Init() {
 	db := mysql.GetDB()
 	db.AutoMigrate(&Admin{})
 	// 添加默认管理员 username:Admin,password:123456
-	a := Admin{Username: "Admin", Password: MD5Helper.EncryptMD5To32Bit("123456"), Administrator: "Y"}
+	a := Admin{Username: "admin", Password: MD5Helper.EncryptMD5To32Bit("123456"), Administrator: "Y"}
 	if !a.QueryByUsername() {
 		a.Register()
 	}
