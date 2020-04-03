@@ -10,6 +10,52 @@
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/admin/DeleteAdmins": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "批量删除管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.DeleteIds"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"status\": true, \"message\": \"SUCCESS\"} {\"status\": false, \"message\": \"用户名或密码不能为空\"}  {\"status\": false, \"message\": \"ERROR\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/Login": {
             "post": {
                 "consumes": [
@@ -82,9 +128,106 @@
                     }
                 }
             }
-        }
+        },
+        "/api/v1/admin/deleteAdmin": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "删除管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"status\": true, \"message\": \"SUCCESS\"} {\"status\": false, \"message\": \"用户名或密码不能为空\"}  {\"status\": false, \"message\": \"ERROR\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/queryAdmins": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员"
+                ],
+                "summary": "分页查询用户(默认前100条) 并返回总记录数",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页数",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"status\": true, \"message\": \"SUCCESS\", \"data\":{}} {\"status\": false, \"message\": \"ERROR\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/updateAdminPass": {}
     },
     "definitions": {
+        "entity.DeleteIds": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "description": "ids",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "entity.Login": {
             "type": "object",
             "properties": {
@@ -109,6 +252,23 @@
                 },
                 "password": {
                     "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "entity.UpdatePass": {
+            "type": "object",
+            "properties": {
+                "newPassword": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "oldPassword": {
+                    "description": "当前登录用户名",
                     "type": "string"
                 },
                 "username": {

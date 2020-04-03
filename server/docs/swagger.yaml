@@ -1,5 +1,13 @@
 basePath: '{{.BasePath}}'
 definitions:
+  entity.DeleteIds:
+    properties:
+      ids:
+        description: ids
+        items:
+          type: integer
+        type: array
+    type: object
   entity.Login:
     properties:
       password:
@@ -22,6 +30,18 @@ definitions:
         description: 用户名
         type: string
     type: object
+  entity.UpdatePass:
+    properties:
+      newPassword:
+        description: 密码
+        type: string
+      oldPassword:
+        description: 当前登录用户名
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
 host: '{{.Host}}'
 info:
   contact: {}
@@ -30,6 +50,36 @@ info:
   title: '{{.Title}}'
   version: '{{.Version}}'
 paths:
+  /api/v1/admin/DeleteAdmins:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.DeleteIds'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
+            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除管理员
+      tags:
+      - 管理员
   /api/v1/admin/Login:
     post:
       consumes:
@@ -78,6 +128,61 @@ paths:
       summary: 添加管理员
       tags:
       - 管理员
+  /api/v1/admin/deleteAdmin:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
+            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除管理员
+      tags:
+      - 管理员
+  /api/v1/admin/queryAdmins:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status": true, "message": "SUCCESS", "data":{}} {"status":
+            false, "message": "ERROR"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询用户(默认前100条) 并返回总记录数
+      tags:
+      - 管理员
+  /api/v1/admin/updateAdminPass: {}
 securityDefinitions:
   ApiKeyAuth:
     in: header

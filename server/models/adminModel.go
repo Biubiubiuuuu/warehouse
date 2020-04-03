@@ -6,20 +6,22 @@ import (
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/dbs/mysql"
+	"github.com/google/uuid"
 )
 
 // Admin model
 type Admin struct {
 	Model
-	Username      string `gorm:"not null;unique;size:255" json:"username"`          //用户名
-	Password      string `gorm:"not null;size:255" json:"-"`                        //密码
-	IP            string `gorm:"size:30" json:"ip"`                                 //登录IP
-	Token         string `gorm:"size:255" json:"token"`                             // 授权令牌
-	Administrator string `gorm:"not null;default:'N';size:10" json:"administrator"` // 超级管理员 Y | N
+	Username      string    `gorm:"not null;unique;size:255" json:"username"`          //用户名
+	Password      string    `gorm:"not null;size:255" json:"-"`                        //密码
+	IP            string    `gorm:"size:30" json:"ip"`                                 //登录IP
+	Token         string    `gorm:"size:255" json:"token"`                             // 授权令牌
+	Administrator string    `gorm:"not null;default:'N';size:10" json:"administrator"` // 超级管理员 Y | N
+	UUID          uuid.UUID `json:"uuid"`
 }
 
 // 登录
-func (a *Admin) Login() error {
+func (a *Admin) LoginAdmin() error {
 	db := mysql.GetDB()
 	if err := db.Where("username = ? AND password = ?", a.Username, a.Password).First(&a).Error; err != nil {
 		return err
@@ -28,7 +30,7 @@ func (a *Admin) Login() error {
 }
 
 // 注册
-func (a *Admin) Register() error {
+func (a *Admin) RegisterAdmin() error {
 	db := mysql.GetDB()
 	if db.NewRecord(a.Username) {
 		return db.Create(&a).Error
@@ -37,16 +39,16 @@ func (a *Admin) Register() error {
 }
 
 // 修改账号信息
-func (a *Admin) UpdataInfo(arsg map[string]interface{}) error {
+func (a *Admin) UpdataAdminInfo(args map[string]interface{}) error {
 	db := mysql.GetDB()
-	if err := db.Model(&a).Update(arsg).Error; err != nil {
+	if err := db.Model(&a).Update(args).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 // 查询账号
-func (a *Admin) QueryByUsername() bool {
+func (a *Admin) QueryAdminByUsername() bool {
 	db := mysql.GetDB()
 	if err := db.Where("username = ?", a.Username).First(&a).Error; err != nil {
 		return false
@@ -64,7 +66,7 @@ func (a *Admin) CheckAdministrator() bool {
 }
 
 // 删除（可批量）
-func (a *Admin) Delete(ids []int64) error {
+func (a *Admin) DeleteAdmins(ids []int64) error {
 	db := mysql.GetDB()
 	tx := db.Begin()
 	for _, id := range ids {
@@ -82,14 +84,14 @@ func (a *Admin) Delete(ids []int64) error {
 }
 
 // 查询用户（分页查询）
-func QueryByLimitOffset(pageSize int, page int) (admins []Admin) {
+func QueryAdminByLimitOffset(pageSize int, page int) (admins []Admin) {
 	db := mysql.GetDB()
 	db.Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&admins)
 	return
 }
 
 // 总记录数
-func QueryCount() (count int) {
+func QueryAdminCount() (count int) {
 	db := mysql.GetDB()
 	db.Model(&Admin{}).Count(&count)
 	return count

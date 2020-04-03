@@ -44,7 +44,11 @@ func InitAdmin(router *gin.Engine) {
 	//管理员 需要登录授权并验证token的request 多个验证用,分开
 	apiAdmin.Use(jwt.JWT())
 	{
+		apiAdmin.GET("queryAdmins", adminController.QueryAdmins)
 		apiAdmin.POST("addAdmin", adminController.AddAdmin)
+		apiAdmin.POST("updateAdminPass", adminController.UpdateAdminPass)
+		apiAdmin.DELETE("deleteAdmin", adminController.DeleteAdmin)
+		apiAdmin.DELETE("deleteAdmins", adminController.DeleteAdmins)
 	}
 }
 
