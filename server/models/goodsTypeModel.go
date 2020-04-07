@@ -13,15 +13,15 @@ import (
 // 商品种类
 type GoodsType struct {
 	Model
-	GoodsName           string    `gorm:"not null;unique;size:255" json:"goods_name"` // 商品名称
-	GoodsSpecs          string    `gorm:"size:20" json:"goods_specs"`                 // 商品规格 1.盒 2.瓶 3.支
-	GoodsUnitPrince     float64   `json:"goods_unitprince"`                           // 商品成本价
-	GoodsPrince         float64   `json:"goods_prince"`                               // 商品销售价
-	GoodsDiscountPrince float64   `json:"goods_discount_prince"`                      // 商品折扣价
-	GoodsImage          string    `json:"goods_image"`                                // 商品图片
-	GoodsBatchNumber    string    `gorm:"size:50" json:"goods_batch_number"`          // 生产批号
-	GoodsDate           time.Time `json:"goods_date"`                                 // 生产日期
-	GoodsState          string    `json:"goods_state"`                                // 商品状态 1.下架  2.在售
+	GoodsName           string    `gorm:"not null;size:50" json:"goods_name"`  // 商品名称
+	GoodsSpecs          string    `gorm:"size:2;default:1" json:"goods_specs"` // 商品规格 1.盒 2.瓶 3.支
+	GoodsUnitPrince     float64   `json:"goods_unitprince"`                    // 商品成本价
+	GoodsPrince         float64   `json:"goods_prince"`                        // 商品销售价
+	GoodsDiscountPrince float64   `json:"goods_discount_prince"`               // 商品折扣价
+	GoodsImage          string    `json:"goods_image"`                         // 商品图片
+	GoodsBatchNumber    string    `gorm:"size:50" json:"goods_batch_number"`   // 生产批号
+	GoodsDate           time.Time `json:"goods_date"`                          // 生产日期
+	GoodsState          string    `gorm:"size:2;default:2" json:"goods_state"` // 商品状态 1.下架  2.在售
 }
 
 // 添加商品种类
@@ -36,10 +36,13 @@ func (g *GoodsType) AddGoodsType() error {
 // 修改商品种类信息
 func (g *GoodsType) UpdateGoodsType(args map[string]interface{}) error {
 	db := mysql.GetDB()
-	if err := db.Model(&g).Update(args).Error; err != nil {
-		return err
-	}
-	return nil
+	return db.Model(&g).Update(args).Error
+}
+
+// 查看商品详情
+func (g *GoodsType) QueryByGoodsTypeID() error {
+	db := mysql.GetDB()
+	return db.First(&g, g.ID).Error
 }
 
 // 下架商品

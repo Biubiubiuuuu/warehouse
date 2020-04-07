@@ -29,13 +29,26 @@ type DeleteIds struct {
 }
 
 // 添加商品种类
-type GoodsType struct {
-	GoodsName           string    `json:"goods_name"`            // 商品名称
-	GoodsSpecs          string    `json:"goods_specs"`           // 商品规格 1.盒 2.瓶 3.支
-	GoodsUnitPrince     float64   `json:"goods_unitprince"`      // 商品成本价
-	GoodsPrince         float64   `json:"goods_prince"`          // 商品销售价
-	GoodsDiscountPrince float64   `json:"goods_discount_prince"` // 商品折扣价
-	GoodsImage          string    `json:"goods_image"`           // 商品图片
-	GoodsBatchNumber    string    `json:"goods_batch_number"`    // 生产批号
-	GoodsDate           time.Time `json:"goods_date"`            // 生产日期
+type AddGoodsType struct {
+	GoodsName        string    `json:"goods_name"`                            // 商品名称
+	GoodsSpecs       string    `json:"goods_specs" enums:"1,2,3" default:"1"` // 商品规格 1.盒 2.瓶 3.支
+	GoodsUnitPrince  float64   `json:"goods_unitprince"`                      // 商品成本价
+	GoodsPrince      float64   `json:"goods_prince"`                          // 商品销售价
+	GoodsImage       string    `json:"goods_image"`                           // 商品图片
+	GoodsBatchNumber string    `json:"goods_batch_number"`                    // 生产批号
+	GoodsDate        time.Time `json:"goods_date"`                            // 生产日期
+	GoodsState       string    `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
+}
+
+// 修改商品种类
+type UpdateGoodsType struct {
+	GoodsID          int64     `json:"goods_id"`                              // 商品ID
+	GoodsName        string    `json:"goods_name"`                            // 商品名称
+	GoodsSpecs       string    `json:"goods_specs" enums:"1,2,3" default:"1"` // 商品规格 1.盒 2.瓶 3.支
+	GoodsUnitPrince  float64   `json:"goods_unitprince"`                      // 商品成本价
+	GoodsPrince      float64   `json:"goods_prince"`                          // 商品销售价
+	GoodsImage       string    `json:"goods_image"`                           // 商品图片
+	GoodsBatchNumber string    `json:"goods_batch_number"`                    // 生产批号
+	GoodsDate        time.Time `json:"goods_date"`                            // 生产日期
+	GoodsState       string    `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
 }

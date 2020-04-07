@@ -1,24 +1,18 @@
-package jwt
+package adminAuth
 
 import (
 	"net/http"
 	"strings"
-	"time"
 
 	tcode "github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/entity"
-	"github.com/Biubiubiuuuu/warehouse/server/helpers/jwtHelper"
+	"github.com/Biubiubiuuuu/warehouse/server/models"
 	"github.com/gin-gonic/gin"
 )
 
-// JWT middleware validation
-// param query url "token"
-// param header "Authorization"
-// JWT middleware validation
-// param query url "token"
-// param header "Authorization"
-func JWT() gin.HandlerFunc {
+// 根据token查询对应账号信息验证当前登录用户或者外部调用 是否有操作curd的权限
+func AdminAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code := tcode.SUCCESS
 		token := c.Query("token")
@@ -29,13 +23,10 @@ func JWT() gin.HandlerFunc {
 			}
 			token = strings.TrimSpace(authToken)
 		}
-		claims, err := jwtHelper.ParseToken(token)
-		if err != nil {
-			code = tcode.TOKEN_AUTH_ERROR
-		} else if time.Now().Unix() > claims.ExpiresAt {
-			code = tcode.TOKEN_TIMEOUT
+		admin := models.Admin{Token: token}
+		if !admin.CheckAdministrator() {
+			code = tcode.NOT_ADMINISTRATOR
 		}
-
 		if code != tcode.SUCCESS {
 			message := msg.GetMsg(code)
 			responseJson := entity.ResponseJson(false, nil, message)

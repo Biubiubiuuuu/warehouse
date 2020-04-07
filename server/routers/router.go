@@ -2,8 +2,10 @@ package routers
 
 import (
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/adminController"
+	"github.com/Biubiubiuuuu/warehouse/server/controllers/goodsTypeController"
 	"github.com/Biubiubiuuuu/warehouse/server/docs"
 	"github.com/Biubiubiuuuu/warehouse/server/helpers/configHelper"
+	"github.com/Biubiubiuuuu/warehouse/server/middlewares/adminAuth"
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/cross"
 	err "github.com/Biubiubiuuuu/warehouse/server/middlewares/error"
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/jwt"
@@ -37,18 +39,30 @@ func Init() *gin.Engine {
 
 // init admin
 func InitAdmin(router *gin.Engine) {
-	//管理员路由分组
+	// 管理员路由分组
 	apiAdmin := router.Group("/api/v1/admin")
 	// 管理员 get post update delete...
 	apiAdmin.POST("Login", adminController.LoginAdmin)
-	//管理员 需要登录授权并验证token的request 多个验证用,分开
+	// 管理员 需要登录授权并验证token
 	apiAdmin.Use(jwt.JWT())
 	{
+		apiAdmin.POST("updateAdminPass", adminController.UpdateAdminPass)
+		apiAdmin.POST("queryGoodsTypesByLimitOffset", goodsTypeController.QueryGoodsTypesByLimitOffset)
+	}
+	// 管理员 需要管理权限Administrator为Y才能操作
+	apiAdmin.Use(jwt.JWT(), adminAuth.AdminAuth())
+	{
+		// 管理员curd
 		apiAdmin.GET("queryAdmins", adminController.QueryAdmins)
 		apiAdmin.POST("addAdmin", adminController.AddAdmin)
-		apiAdmin.POST("updateAdminPass", adminController.UpdateAdminPass)
 		apiAdmin.DELETE("deleteAdmin", adminController.DeleteAdmin)
 		apiAdmin.DELETE("deleteAdmins", adminController.DeleteAdmins)
+		// 商品种类curd
+		apiAdmin.POST("addGoodsType", goodsTypeController.AddGoodsType)
+		apiAdmin.PUT("updateGoodsType", goodsTypeController.UpdateGoodsType)
+		apiAdmin.GET("queryByGoodsTypeID", goodsTypeController.QueryByGoodsTypeID)
+		apiAdmin.DELETE("deleteGoodsType", goodsTypeController.DeleteGoodsType)
+		apiAdmin.DELETE("deleteGoodsTypes", goodsTypeController.DeleteGoodsTypes)
 	}
 }
 

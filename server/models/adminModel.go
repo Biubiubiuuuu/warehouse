@@ -23,10 +23,7 @@ type Admin struct {
 // 登录
 func (a *Admin) LoginAdmin() error {
 	db := mysql.GetDB()
-	if err := db.Where("username = ? AND password = ?", a.Username, a.Password).First(&a).Error; err != nil {
-		return err
-	}
-	return nil
+	return db.Where("username = ? AND password = ?", a.Username, a.Password).First(&a).Error
 }
 
 // 注册
@@ -41,10 +38,7 @@ func (a *Admin) RegisterAdmin() error {
 // 修改账号信息
 func (a *Admin) UpdataAdminInfo(args map[string]interface{}) error {
 	db := mysql.GetDB()
-	if err := db.Model(&a).Update(args).Error; err != nil {
-		return err
-	}
-	return nil
+	return db.Model(&a).Update(args).Error
 }
 
 // 查询账号
@@ -59,7 +53,7 @@ func (a *Admin) QueryAdminByUsername() bool {
 // 检查用户权限
 func (a *Admin) CheckAdministrator() bool {
 	db := mysql.GetDB()
-	if err := db.Where("username = ? AND administrator = ?", a.Username, "Y").First(&a).Error; err != nil {
+	if err := db.Where("(username = ? OR token =?) AND administrator = ?", a.Username, a.Token, "Y").First(&a).Error; err != nil {
 		return false
 	}
 	return true

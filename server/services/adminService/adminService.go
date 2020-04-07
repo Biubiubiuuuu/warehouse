@@ -104,16 +104,12 @@ func UpdateAdminPass(updatePass entity.UpdatePass) (responseData entity.Response
 }
 
 // 删除
-func DeleteAdmin(onlineUsername string, ids []int64) (responseData entity.ResponseData) {
-	if len(ids) == 0 || onlineUsername == "" {
+func DeleteAdmin(ids []int64) (responseData entity.ResponseData) {
+	if len(ids) == 0 {
 		responseData.Message = msg.GetMsg(tcode.NOTNULL)
 		return
 	}
-	admin := models.Admin{Username: onlineUsername}
-	if !admin.CheckAdministrator() {
-		responseData.Message = msg.GetMsg(tcode.NOT_ADMINISTRATOR)
-		return
-	}
+	admin := models.Admin{}
 	if err := admin.DeleteAdmins(ids); err != nil {
 		responseData.Message = msg.GetMsg(tcode.DELETE_ERROR)
 		return
