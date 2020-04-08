@@ -18,7 +18,7 @@ type Register struct {
 
 // 修改密码
 type UpdatePass struct {
-	OldPassword string `json:"oldPassword"` // 当前登录用户名
+	OldPassword string `json:"oldPassword"` // 旧密码
 	Username    string `json:"username"`    // 用户名
 	NewPassword string `json:"newPassword"` // 密码
 }
@@ -38,6 +38,7 @@ type AddGoodsType struct {
 	GoodsBatchNumber string    `json:"goods_batch_number"`                    // 生产批号
 	GoodsDate        time.Time `json:"goods_date"`                            // 生产日期
 	GoodsState       string    `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
+	GoodsCreateAdmin string    `json:"goods_create_aAdmin"`                   // 创建人
 }
 
 // 修改商品种类
@@ -51,4 +52,16 @@ type UpdateGoodsType struct {
 	GoodsBatchNumber string    `json:"goods_batch_number"`                    // 生产批号
 	GoodsDate        time.Time `json:"goods_date"`                            // 生产日期
 	GoodsState       string    `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
+}
+
+// 添加商品库存
+type AddGoodsStock struct {
+	QuantityTotal int64 `json:"quantity_total"` // 总数量
+	GoodsTypeID   int64 `json:"goods_type_id"`  // 商品种类ID
+}
+
+// 修改商品库存信息
+type UpdateGoodsStock struct {
+	GoodsStockID int64 `json:"goods_stock_id"` // 库存ID
+	AddQuantity  int64 `json:"add_quantity"`   // 添加库存数量
 }

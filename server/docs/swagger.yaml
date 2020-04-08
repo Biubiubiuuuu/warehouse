@@ -1,5 +1,42 @@
 basePath: '{{.BasePath}}'
 definitions:
+  entity.AddGoodsType:
+    properties:
+      goods_batch_number:
+        description: 生产批号
+        type: string
+      goods_date:
+        description: 生产日期
+        type: string
+      goods_image:
+        description: 商品图片
+        type: string
+      goods_name:
+        description: 商品名称
+        type: string
+      goods_prince:
+        description: 商品销售价
+        type: number
+      goods_specs:
+        default: "1"
+        description: 商品规格 1.盒 2.瓶 3.支
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        type: string
+      goods_state:
+        default: "2"
+        description: 商品状态 1.下架  2.在售
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        type: string
+      goods_unitprince:
+        description: 商品成本价
+        type: number
+    type: object
   entity.DeleteIds:
     properties:
       ids:
@@ -30,13 +67,62 @@ definitions:
         description: 用户名
         type: string
     type: object
+  entity.ResponseData:
+    properties:
+      data:
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  entity.UpdateGoodsType:
+    properties:
+      goods_batch_number:
+        description: 生产批号
+        type: string
+      goods_date:
+        description: 生产日期
+        type: string
+      goods_id:
+        description: 商品ID
+        type: integer
+      goods_image:
+        description: 商品图片
+        type: string
+      goods_name:
+        description: 商品名称
+        type: string
+      goods_prince:
+        description: 商品销售价
+        type: number
+      goods_specs:
+        default: "1"
+        description: 商品规格 1.盒 2.瓶 3.支
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        type: string
+      goods_state:
+        default: "2"
+        description: 商品状态 1.下架  2.在售
+        enum:
+        - "1"
+        - "2"
+        - "3"
+        type: string
+      goods_unitprince:
+        description: 商品成本价
+        type: number
+    type: object
   entity.UpdatePass:
     properties:
       newPassword:
         description: 密码
         type: string
       oldPassword:
-        description: 当前登录用户名
+        description: 旧密码
         type: string
       username:
         description: 用户名
@@ -50,59 +136,6 @@ info:
   title: '{{.Title}}'
   version: '{{.Version}}'
 paths:
-  /api/v1/admin/DeleteAdmins:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: username
-        in: query
-        name: username
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/entity.DeleteIds'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
-            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 批量删除管理员
-      tags:
-      - 管理员
-  /api/v1/admin/Login:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/entity.Login'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
-            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
-          schema:
-            type: string
-      summary: 管理员登录
-      tags:
-      - 管理员
   /api/v1/admin/addAdmin:
     post:
       consumes:
@@ -119,13 +152,43 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
-            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          description: desc
           schema:
-            type: string
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
       security:
       - ApiKeyAuth: []
       summary: 添加管理员
+      tags:
+      - 管理员
+  /api/v1/admin/addGoodsType:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddGoodsType'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 添加商品种类
       tags:
       - 管理员
   /api/v1/admin/deleteAdmin:
@@ -138,22 +201,113 @@ paths:
         name: id
         required: true
         type: string
-      - description: username
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除管理员
+      tags:
+      - 管理员
+  /api/v1/admin/deleteAdmins:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.DeleteIds'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除管理员
+      tags:
+      - 管理员
+  /api/v1/admin/deleteGoodsType:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
         in: query
-        name: username
+        name: id
         required: true
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"status": true, "message": "SUCCESS"} {"status": false, "message":
-            "用户名或密码不能为空"}  {"status": false, "message": "ERROR"}'
+          description: desc
           schema:
-            type: string
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
       security:
       - ApiKeyAuth: []
-      summary: 删除管理员
+      summary: 下架商品
+      tags:
+      - 管理员
+  /api/v1/admin/deleteGoodsTypes:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.DeleteIds'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 批量下架商品
+      tags:
+      - 管理员
+  /api/v1/admin/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Login'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      summary: 管理员登录
       tags:
       - 管理员
   /api/v1/admin/queryAdmins:
@@ -173,16 +327,90 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"status": true, "message": "SUCCESS", "data":{}} {"status":
-            false, "message": "ERROR"}'
+          description: desc
           schema:
-            type: string
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
       security:
       - ApiKeyAuth: []
       summary: 分页查询用户(默认前100条) 并返回总记录数
       tags:
       - 管理员
+  /api/v1/admin/queryByGoodsTypeID:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 商品种类ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查看商品种类详情
+      tags:
+      - 管理员
+  /api/v1/admin/queryGoodsTypesByLimitOffset:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询商品种类(默认前100条) 并返回总记录数
+      tags:
+      - 管理员
   /api/v1/admin/updateAdminPass: {}
+  /api/v1/admin/updateGoodsType:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateGoodsType'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改商品种类信息
+      tags:
+      - 管理员
 securityDefinitions:
   ApiKeyAuth:
     in: header

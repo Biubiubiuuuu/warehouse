@@ -26,4 +26,5 @@ const (
 	UPDATE_ERROR                  = -10014
 	EXIST                         = -10015
 	NOTNULL                       = -10016
+	STOCK_EXIST                   = -10017
 )

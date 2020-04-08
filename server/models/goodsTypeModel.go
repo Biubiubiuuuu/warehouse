@@ -13,15 +13,16 @@ import (
 // 商品种类
 type GoodsType struct {
 	Model
-	GoodsName           string    `gorm:"not null;size:50" json:"goods_name"`  // 商品名称
-	GoodsSpecs          string    `gorm:"size:2;default:1" json:"goods_specs"` // 商品规格 1.盒 2.瓶 3.支
-	GoodsUnitPrince     float64   `json:"goods_unitprince"`                    // 商品成本价
-	GoodsPrince         float64   `json:"goods_prince"`                        // 商品销售价
-	GoodsDiscountPrince float64   `json:"goods_discount_prince"`               // 商品折扣价
-	GoodsImage          string    `json:"goods_image"`                         // 商品图片
-	GoodsBatchNumber    string    `gorm:"size:50" json:"goods_batch_number"`   // 生产批号
-	GoodsDate           time.Time `json:"goods_date"`                          // 生产日期
-	GoodsState          string    `gorm:"size:2;default:2" json:"goods_state"` // 商品状态 1.下架  2.在售
+	GoodsName           string    `gorm:"not null;size:50" json:"goods_name"`   // 商品名称
+	GoodsSpecs          string    `gorm:"size:2;default:1" json:"goods_specs"`  // 商品规格 1.盒 2.瓶 3.支
+	GoodsUnitPrince     float64   `json:"goods_unitprince"`                     // 商品成本价
+	GoodsPrince         float64   `json:"goods_prince"`                         // 商品销售价
+	GoodsDiscountPrince float64   `json:"goods_discount_prince"`                // 商品折扣价
+	GoodsImage          string    `json:"goods_image"`                          // 商品图片
+	GoodsBatchNumber    string    `gorm:"size:50" json:"goods_batch_number"`    // 生产批号
+	GoodsDate           time.Time `json:"goods_date"`                           // 生产日期
+	GoodsState          string    `gorm:"size:2;default:2" json:"goods_state"`  // 商品状态 1.下架  2.在售
+	GoodsCreateAdmin    string    `gorm:"not null;" json:"goods_create_aAdmin"` // 创建人
 }
 
 // 添加商品种类
@@ -61,6 +62,13 @@ func (g *GoodsType) DeleteGoodsTypes(ids []int64) error {
 	}
 	tx.Commit()
 	return nil
+}
+
+// 查询所有商品种类（支持模糊查询）
+func (g *GoodsType) QueryAllGoodsTypes() (goodsTypes []GoodsType) {
+	db := mysql.GetDB()
+	db.Select("ID, GoodsName").Where("GoodsName LIKE ?", "%"+g.GoodsName+"%").Find(&goodsTypes)
+	return
 }
 
 // 查看商品种类（分页查询）

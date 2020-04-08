@@ -42,7 +42,7 @@ func InitAdmin(router *gin.Engine) {
 	// 管理员路由分组
 	apiAdmin := router.Group("/api/v1/admin")
 	// 管理员 get post update delete...
-	apiAdmin.POST("Login", adminController.LoginAdmin)
+	apiAdmin.POST("login", adminController.LoginAdmin)
 	// 管理员 需要登录授权并验证token
 	apiAdmin.Use(jwt.JWT())
 	{

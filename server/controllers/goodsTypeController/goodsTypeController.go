@@ -19,6 +19,7 @@ import (
 // @Param body body entity.AddGoodsType true "body"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/admin/addGoodsType [POST]
+// @Security ApiKeyAuth
 func AddGoodsType(c *gin.Context) {
 	request := entity.AddGoodsType{}
 	responseData := entity.ResponseData{}
@@ -37,6 +38,7 @@ func AddGoodsType(c *gin.Context) {
 // @Param body body entity.UpdateGoodsType true "body"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/admin/updateGoodsType [PUT]
+// @Security ApiKeyAuth
 func UpdateGoodsType(c *gin.Context) {
 	request := entity.UpdateGoodsType{}
 	responseData := entity.ResponseData{}
@@ -55,6 +57,7 @@ func UpdateGoodsType(c *gin.Context) {
 // @Param id query string true "商品种类ID"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/admin/queryByGoodsTypeID [GET]
+// @Security ApiKeyAuth
 func QueryByGoodsTypeID(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.DefaultQuery("id", "0"), 10, 64)
 	responseData := goodsService.QueryByGoodsTypeID(id)

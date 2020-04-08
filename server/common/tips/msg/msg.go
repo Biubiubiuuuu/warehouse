@@ -30,6 +30,7 @@ var MsgFlags = map[int]string{
 	c.NOT_ADMINISTRATOR:             "没有权限操作",
 	c.EXIST:                         "已存在",
 	c.NOTNULL:                       "参数不能为空",
+	c.STOCK_EXIST:                   "该商品已创建库存，请直接修改库存信息",
 }
 
 // get return msg
