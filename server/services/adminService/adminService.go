@@ -43,13 +43,8 @@ func LoginAdmin(login entity.Login, ip string) (responseData entity.ResponseData
 
 // 注册
 func AddAdmin(add entity.Register) (responseData entity.ResponseData) {
-	if add.OnlineUsername == "" || add.Username == "" || add.Password == "" {
+	if add.Username == "" || add.Password == "" {
 		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_NOT_NULL)
-		return
-	}
-	admin := models.Admin{Username: add.OnlineUsername}
-	if !admin.CheckAdministrator() {
-		responseData.Message = msg.GetMsg(tcode.NOT_ADMINISTRATOR)
 		return
 	}
 	if add.Administrator != "Y" {
@@ -57,7 +52,7 @@ func AddAdmin(add entity.Register) (responseData entity.ResponseData) {
 	}
 	newAdmin := models.Admin{Username: add.Username, Password: MD5Helper.EncryptMD5To32Bit(add.Password), Administrator: add.Administrator}
 	if err := newAdmin.RegisterAdmin(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.ADD_ERROR)
+		responseData.Message = msg.GetMsg(tcode.USERNAME_EXIST)
 		return
 	}
 	responseData.Status = true

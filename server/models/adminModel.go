@@ -3,8 +3,6 @@ package models
 import (
 	"errors"
 
-	"github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
-	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/dbs/mysql"
 	"github.com/google/uuid"
 )
@@ -29,10 +27,7 @@ func (a *Admin) LoginAdmin() error {
 // 注册
 func (a *Admin) RegisterAdmin() error {
 	db := mysql.GetDB()
-	if db.NewRecord(a.Username) {
-		return db.Create(&a).Error
-	}
-	return errors.New(msg.GetMsg(code.USERNAME_EXIST))
+	return db.Create(&a).Error
 }
 
 // 修改账号信息
@@ -41,7 +36,7 @@ func (a *Admin) UpdataAdminInfo(args map[string]interface{}) error {
 	return db.Model(&a).Update(args).Error
 }
 
-// 查询账号
+// 查询账号是否存在并返回账号信息
 func (a *Admin) QueryAdminByUsername() bool {
 	db := mysql.GetDB()
 	if err := db.Where("username = ?", a.Username).First(&a).Error; err != nil {

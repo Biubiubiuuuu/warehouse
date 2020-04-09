@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/adminController"
+	"github.com/Biubiubiuuuu/warehouse/server/controllers/goodsStockController"
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/goodsTypeController"
 	"github.com/Biubiubiuuuu/warehouse/server/docs"
 	"github.com/Biubiubiuuuu/warehouse/server/helpers/configHelper"
@@ -47,7 +48,15 @@ func InitAdmin(router *gin.Engine) {
 	apiAdmin.Use(jwt.JWT())
 	{
 		apiAdmin.POST("updateAdminPass", adminController.UpdateAdminPass)
-		apiAdmin.POST("queryGoodsTypesByLimitOffset", goodsTypeController.QueryGoodsTypesByLimitOffset)
+
+		apiGoodsType := apiAdmin.Group("/goodsType")
+		apiGoodsType.GET("queryByGoodsTypeID", goodsTypeController.QueryByGoodsTypeID)
+		apiGoodsType.GET("queryGoodsTypesByLimitOffset", goodsTypeController.QueryGoodsTypesByLimitOffset)
+		apiGoodsType.GET("queryAllGoods", goodsTypeController.QueryAllGoods)
+
+		apigoodsStock := apiAdmin.Group("/goodsStock")
+		apigoodsStock.GET("queryGoodsStocksByLimitOffset", goodsStockController.QueryGoodsStocksByLimitOffset)
+		apigoodsStock.GET("queryByGoodsStockID", goodsStockController.QueryByGoodsStockID)
 	}
 	// 管理员 需要管理权限Administrator为Y才能操作
 	apiAdmin.Use(jwt.JWT(), adminAuth.AdminAuth())
@@ -57,12 +66,21 @@ func InitAdmin(router *gin.Engine) {
 		apiAdmin.POST("addAdmin", adminController.AddAdmin)
 		apiAdmin.DELETE("deleteAdmin", adminController.DeleteAdmin)
 		apiAdmin.DELETE("deleteAdmins", adminController.DeleteAdmins)
+
 		// 商品种类curd
-		apiAdmin.POST("addGoodsType", goodsTypeController.AddGoodsType)
-		apiAdmin.PUT("updateGoodsType", goodsTypeController.UpdateGoodsType)
-		apiAdmin.GET("queryByGoodsTypeID", goodsTypeController.QueryByGoodsTypeID)
-		apiAdmin.DELETE("deleteGoodsType", goodsTypeController.DeleteGoodsType)
-		apiAdmin.DELETE("deleteGoodsTypes", goodsTypeController.DeleteGoodsTypes)
+		apiGoodsType := apiAdmin.Group("/goodsType")
+		apiGoodsType.POST("addGoodsType", goodsTypeController.AddGoodsType)
+		apiGoodsType.PUT("updateGoodsType", goodsTypeController.UpdateGoodsType)
+		apiGoodsType.DELETE("deleteGoodsType", goodsTypeController.DeleteGoodsType)
+		apiGoodsType.DELETE("deleteGoodsTypes", goodsTypeController.DeleteGoodsTypes)
+
+		// 商品库存curd
+		apigoodsStock := apiAdmin.Group("/goodsStock")
+		apigoodsStock.POST("addGoodsStock", goodsStockController.AddGoodsStock)
+		apigoodsStock.PUT("updateGoodsStock", goodsStockController.UpdateGoodsStock)
+
+		// 商品订单curd
+
 	}
 }
 

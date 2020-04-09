@@ -12,13 +12,12 @@ import (
 )
 
 // @Summary 添加商品种类
-// @tags 管理员
+// @tags 商品种类
 // @Accept  application/json
 // @Produce  json
-// @Param username query string true "username"
 // @Param body body entity.AddGoodsType true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/addGoodsType [POST]
+// @Router /api/v1/admin/goodsType/addGoodsType [POST]
 // @Security ApiKeyAuth
 func AddGoodsType(c *gin.Context) {
 	request := entity.AddGoodsType{}
@@ -32,12 +31,12 @@ func AddGoodsType(c *gin.Context) {
 }
 
 // @Summary 修改商品种类信息
-// @tags 管理员
+// @tags 商品种类
 // @Accept  application/json
 // @Produce  json
 // @Param body body entity.UpdateGoodsType true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/updateGoodsType [PUT]
+// @Router /api/v1/admin/goodsType/updateGoodsType [PUT]
 // @Security ApiKeyAuth
 func UpdateGoodsType(c *gin.Context) {
 	request := entity.UpdateGoodsType{}
@@ -51,12 +50,12 @@ func UpdateGoodsType(c *gin.Context) {
 }
 
 // @Summary 查看商品种类详情
-// @tags 管理员
+// @tags 商品种类
 // @Accept  application/json
 // @Produce  json
 // @Param id query string true "商品种类ID"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/queryByGoodsTypeID [GET]
+// @Router /api/v1/admin/goodsType/queryByGoodsTypeID [GET]
 // @Security ApiKeyAuth
 func QueryByGoodsTypeID(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.DefaultQuery("id", "0"), 10, 64)
@@ -65,12 +64,12 @@ func QueryByGoodsTypeID(c *gin.Context) {
 }
 
 // @Summary 下架商品
-// @tags 管理员
+// @tags 商品种类
 // @Accept  application/json
 // @Produce  json
 // @Param id query string true "id"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/deleteGoodsType [DELETE]
+// @Router /api/v1/admin/goodsType/deleteGoodsType [DELETE]
 // @Security ApiKeyAuth
 func DeleteGoodsType(c *gin.Context) {
 	request := entity.DeleteIds{}
@@ -81,12 +80,12 @@ func DeleteGoodsType(c *gin.Context) {
 }
 
 // @Summary 批量下架商品
-// @tags 管理员
+// @tags 商品种类
 // @Accept  application/json
 // @Produce  json
 // @Param body body entity.DeleteIds true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/deleteGoodsTypes [DELETE]
+// @Router /api/v1/admin/goodsType/deleteGoodsTypes [DELETE]
 // @Security ApiKeyAuth
 func DeleteGoodsTypes(c *gin.Context) {
 	responseData := entity.ResponseData{}
@@ -101,17 +100,31 @@ func DeleteGoodsTypes(c *gin.Context) {
 }
 
 // @Summary 分页查询商品种类(默认前100条) 并返回总记录数
-// @tags 管理员
+// @tags 商品种类
 // @Accept application/x-www-form-urlencoded
 // @Produce  json
 // @Param pageSize query string false "页大小"
 // @Param page query string false "页数"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/queryGoodsTypesByLimitOffset [GET]
+// @Router /api/v1/admin/goodsType/queryGoodsTypesByLimitOffset [GET]
 // @Security ApiKeyAuth
 func QueryGoodsTypesByLimitOffset(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "100"))
 	responseData := goodsService.QueryGoodsTypesByLimitOffset(pageSize, page)
+	c.JSON(http.StatusOK, responseData)
+}
+
+// @Summary 查询商品种类ID和商品名（支持模糊查询）
+// @tags 商品种类
+// @Accept application/x-www-form-urlencoded
+// @Produce  json
+// @Param goods_name query string false "商品名称"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/goodsType/queryAllGoods [GET]
+// @Security ApiKeyAuth
+func QueryAllGoods(c *gin.Context) {
+	goods_name := c.DefaultQuery("goods_name", "")
+	responseData := goodsService.QueryAllGoods(goods_name)
 	c.JSON(http.StatusOK, responseData)
 }

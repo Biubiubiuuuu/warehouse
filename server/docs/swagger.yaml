@@ -1,9 +1,21 @@
 basePath: '{{.BasePath}}'
 definitions:
+  entity.AddGoodsStock:
+    properties:
+      goods_type_id:
+        description: 商品种类ID
+        type: integer
+      quantity_total:
+        description: 总数量
+        type: integer
+    type: object
   entity.AddGoodsType:
     properties:
       goods_batch_number:
         description: 生产批号
+        type: string
+      goods_create_admin:
+        description: 创建人
         type: string
       goods_date:
         description: 生产日期
@@ -75,6 +87,15 @@ definitions:
         type: string
       status:
         type: boolean
+    type: object
+  entity.UpdateGoodsStock:
+    properties:
+      add_quantity:
+        description: 添加库存数量
+        type: integer
+      goods_stock_id:
+        description: 库存ID
+        type: integer
     type: object
   entity.UpdateGoodsType:
     properties:
@@ -161,36 +182,6 @@ paths:
       summary: 添加管理员
       tags:
       - 管理员
-  /api/v1/admin/addGoodsType:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: username
-        in: query
-        name: username
-        required: true
-        type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/entity.AddGoodsType'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-            type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 添加商品种类
-      tags:
-      - 管理员
   /api/v1/admin/deleteAdmin:
     delete:
       consumes:
@@ -239,7 +230,131 @@ paths:
       summary: 批量删除管理员
       tags:
       - 管理员
-  /api/v1/admin/deleteGoodsType:
+  /api/v1/admin/goodsStock/addGoodsStock:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddGoodsStock'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 添加商品库存
+      tags:
+      - 商品库存
+  /api/v1/admin/goodsStock/queryByGoodsStockID:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 商品库存ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查看商品库存详情
+      tags:
+      - 商品库存
+  /api/v1/admin/goodsStock/queryGoodsStocksByLimitOffset:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询商品库存(默认前100条) 并返回总记录数
+      tags:
+      - 商品库存
+  /api/v1/admin/goodsStock/updateGoodsStock:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateGoodsStock'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 增加商品库存、总数量
+      tags:
+      - 商品库存
+  /api/v1/admin/goodsType/addGoodsType:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddGoodsType'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 添加商品种类
+      tags:
+      - 商品种类
+  /api/v1/admin/goodsType/deleteGoodsType:
     delete:
       consumes:
       - application/json
@@ -261,8 +376,8 @@ paths:
       - ApiKeyAuth: []
       summary: 下架商品
       tags:
-      - 管理员
-  /api/v1/admin/deleteGoodsTypes:
+      - 商品种类
+  /api/v1/admin/goodsType/deleteGoodsTypes:
     delete:
       consumes:
       - application/json
@@ -286,7 +401,103 @@ paths:
       - ApiKeyAuth: []
       summary: 批量下架商品
       tags:
-      - 管理员
+      - 商品种类
+  /api/v1/admin/goodsType/queryAllGoods:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 商品名称
+        in: query
+        name: goods_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询商品种类ID和商品名（支持模糊查询）
+      tags:
+      - 商品种类
+  /api/v1/admin/goodsType/queryByGoodsTypeID:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 商品种类ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查看商品种类详情
+      tags:
+      - 商品种类
+  /api/v1/admin/goodsType/queryGoodsTypesByLimitOffset:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询商品种类(默认前100条) 并返回总记录数
+      tags:
+      - 商品种类
+  /api/v1/admin/goodsType/updateGoodsType:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateGoodsType'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改商品种类信息
+      tags:
+      - 商品种类
   /api/v1/admin/login:
     post:
       consumes:
@@ -336,81 +547,7 @@ paths:
       summary: 分页查询用户(默认前100条) 并返回总记录数
       tags:
       - 管理员
-  /api/v1/admin/queryByGoodsTypeID:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: 商品种类ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-            type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 查看商品种类详情
-      tags:
-      - 管理员
-  /api/v1/admin/queryGoodsTypesByLimitOffset:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      parameters:
-      - description: 页大小
-        in: query
-        name: pageSize
-        type: string
-      - description: 页数
-        in: query
-        name: page
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-            type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 分页查询商品种类(默认前100条) 并返回总记录数
-      tags:
-      - 管理员
   /api/v1/admin/updateAdminPass: {}
-  /api/v1/admin/updateGoodsType:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/entity.UpdateGoodsType'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-            type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 修改商品种类信息
-      tags:
-      - 管理员
 securityDefinitions:
   ApiKeyAuth:
     in: header

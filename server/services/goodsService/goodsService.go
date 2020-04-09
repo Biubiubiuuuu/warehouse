@@ -1,6 +1,10 @@
 package goodsService
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	tcode "github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/entity"
@@ -18,6 +22,7 @@ func AddGoodsType(g entity.AddGoodsType) (responseData entity.ResponseData) {
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
 		return
 	}
+	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
 	goodsType := models.GoodsType{
 		GoodsName:        g.GoodsName,
 		GoodsSpecs:       g.GoodsSpecs,
@@ -25,11 +30,11 @@ func AddGoodsType(g entity.AddGoodsType) (responseData entity.ResponseData) {
 		GoodsPrince:      g.GoodsPrince,
 		GoodsImage:       g.GoodsImage,
 		GoodsBatchNumber: g.GoodsBatchNumber,
-		GoodsDate:        g.GoodsDate,
+		GoodsDate:        goodsDate,
 		GoodsCreateAdmin: g.GoodsCreateAdmin,
 	}
 	if err := goodsType.AddGoodsType(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.ADD_ERROR)
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + fmt.Sprintf(",%v%v", g.GoodsName, msg.GetMsg(code.EXIST))
 		return
 	}
 	responseData.Status = true
@@ -41,6 +46,11 @@ func AddGoodsType(g entity.AddGoodsType) (responseData entity.ResponseData) {
 func UpdateGoodsType(g entity.UpdateGoodsType) (responseData entity.ResponseData) {
 	goodsType := models.GoodsType{}
 	goodsType.ID = g.GoodsID
+	if err := goodsType.QueryByGoodsTypeID(); err != nil {
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + ",商品ID不存在"
+		return
+	}
+	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
 	args := map[string]interface{}{
 		"GoodsName":        g.GoodsName,
 		"GoodsSpecs":       g.GoodsSpecs,
@@ -48,7 +58,7 @@ func UpdateGoodsType(g entity.UpdateGoodsType) (responseData entity.ResponseData
 		"GoodsPrince ":     g.GoodsPrince,
 		"GoodsImage":       g.GoodsImage,
 		"GoodsBatchNumber": g.GoodsBatchNumber,
-		"GoodsDate":        g.GoodsDate,
+		"GoodsDate":        goodsDate,
 		"GoodsState":       g.GoodsState,
 	}
 	if err := goodsType.UpdateGoodsType(args); err != nil {
@@ -108,6 +118,22 @@ func QueryGoodsTypesByLimitOffset(pageSize int, page int) (responseData entity.R
 	return
 }
 
+// 查询商品种类ID和商品名（支持模糊查询）
+func QueryAllGoods(goodsName string) (responseData entity.ResponseData) {
+	goodsType := models.GoodsType{}
+	goodsType.GoodsName = goodsName
+	goods := goodsType.QueryAllGoods()
+	if len(goods) == 0 {
+		responseData.Message = msg.GetMsg(tcode.NOTMORE)
+	}
+	data := make(map[string]interface{})
+	data["goodsTypes"] = goods
+	responseData.Data = data
+	responseData.Status = true
+	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
+	return
+}
+
 /*==========================================end==========================================*/
 
 /*==========================================商品库存curd==================================*/
@@ -117,6 +143,12 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 	goodsStock := models.GoodsStock{
 		QuantityTotal: g.QuantityTotal,
 		GoodsTypeID:   g.GoodsTypeID,
+	}
+	goodsType := models.GoodsType{}
+	goodsType.ID = g.GoodsTypeID
+	if err := goodsType.QueryByGoodsTypeID(); err != nil {
+		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，该商品种类不存在，请先添加商品种类"
+		return
 	}
 	if err := goodsStock.AddGoodsStock(); err != nil {
 		responseData.Message = err.Error()
@@ -131,15 +163,17 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 func UpdateGoodsStock(g entity.UpdateGoodsStock) (responseData entity.ResponseData) {
 	goodsStock := models.GoodsStock{}
 	goodsStock.ID = g.GoodsStockID
-	if _, err := models.QueryByGoodsStockID(g.GoodsStockID); err != nil {
-		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + "，该商品种类不存在"
+	var data models.GoodsStockData
+	var errQueryByGoodsStockID error
+	if data, errQueryByGoodsStockID = goodsStock.QueryByGoodsStockID(); errQueryByGoodsStockID != nil {
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + "，该商品库存不存在，请先添加商品库存信息再修改"
 		return
 	}
-	quantityTotal := goodsStock.QuantityTotal + g.AddQuantity
-	quantityStock := goodsStock.QuantityStock + g.AddQuantity
+	quantityTotal := data.QuantityTotal + g.AddQuantity
+	quantityStock := data.QuantityStock + g.AddQuantity
 	args := map[string]interface{}{
-		"QuantityTotal ": quantityTotal,
-		"QuantityStock":  quantityStock,
+		"QuantityTotal": quantityTotal,
+		"QuantityStock": quantityStock,
 	}
 	if err := goodsStock.UpdateGoodsStock(args); err != nil {
 		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR)
@@ -147,6 +181,23 @@ func UpdateGoodsStock(g entity.UpdateGoodsStock) (responseData entity.ResponseDa
 	}
 	responseData.Status = true
 	responseData.Message = msg.GetMsg(tcode.UPDATE_SUCCESS)
+	return
+}
+
+// 查询商品种类详情
+func QueryByGoodsStockID(id int64) (responseData entity.ResponseData) {
+	goodsStock := models.GoodsStock{}
+	goodsStock.ID = id
+	goodsStockData, err := goodsStock.QueryByGoodsStockID()
+	if err != nil {
+		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，该商品库存不存在"
+		return
+	}
+	data := make(map[string]interface{})
+	data["goodsStock"] = goodsStockData
+	responseData.Data = data
+	responseData.Status = true
+	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
 	return
 }
 
