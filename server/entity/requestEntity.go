@@ -16,7 +16,6 @@ type Register struct {
 // 管理员修改密码
 type UpdatePass struct {
 	OldPassword string `json:"oldPassword"` // 旧密码
-	Username    string `json:"username"`    // 用户名
 	NewPassword string `json:"newPassword"` // 密码
 }
 
@@ -35,7 +34,6 @@ type AddGoodsType struct {
 	GoodsBatchNumber string  `json:"goods_batch_number"`                    // 生产批号
 	GoodsDate        string  `json:"goods_date"`                            // 生产日期
 	GoodsState       string  `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
-	GoodsCreateAdmin string  `json:"goods_create_admin"`                    // 创建人
 }
 
 // 修改商品种类
@@ -78,6 +76,30 @@ type UserRegister struct {
 // 用户修改密码
 type UserUpdatePass struct {
 	OldPassword string `json:"oldPassword"` // 旧密码
-	Tel         string `json:"tel"`         // 用户名
 	NewPassword string `json:"newPassword"` // 密码
+}
+
+// 添加用户信息
+type AddUserInfo struct {
+	Provice     string `json:"provice"`       // 省
+	City        string `json:"city"`          // 城市
+	ShopAddress string `json:"shop_address1"` // 门店详细地址
+}
+
+// 下单请求
+type AddOrder struct {
+	OrderUserInfo  OrderUserInfo    `json:"order_user_info"`  // 用户信息
+	OrderGoodsInfo []OrderGoodsInfo `json:"order_goods_info"` // 商品信息
+}
+
+type OrderGoodsInfo struct {
+	GoodsTypeID int64 `json:"goods_type_id"` // 商品ID
+	GoodsQty    int64 `json:"goods_qty"`     // 商品数量
+}
+
+type OrderUserInfo struct {
+	Provice     string `json:"provice"`       // 省
+	City        string `json:"city"`          // 城市
+	ShopAddress string `json:"shop_address1"` // 门店详细地址
+	Tel         string `json:"tel"`           // 联系电话
 }

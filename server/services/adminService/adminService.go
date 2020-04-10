@@ -77,14 +77,19 @@ func QueryByLimitOffset(pageSize int, page int) (responseData entity.ResponseDat
 }
 
 // 修改密码
-func UpdateAdminPass(updatePass entity.UpdatePass) (responseData entity.ResponseData) {
-	if updatePass.Username == "" || updatePass.NewPassword == "" || updatePass.OldPassword == "" {
-		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_NOT_NULL)
+func UpdateAdminPass(token string, updatePass entity.UpdatePass) (responseData entity.ResponseData) {
+	if updatePass.NewPassword == "" || updatePass.OldPassword == "" {
+		responseData.Message = "密码不能为空！"
 		return
 	}
-	admin := models.Admin{Username: updatePass.Username, Password: MD5Helper.EncryptMD5To32Bit(updatePass.OldPassword)}
+	admin := models.Admin{Token: token}
+	if !admin.QueryAdminByUsername() {
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
+		return
+	}
+	admin = models.Admin{Username: admin.Username, Password: MD5Helper.EncryptMD5To32Bit(updatePass.OldPassword)}
 	if err := admin.LoginAdmin(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR)
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + ":" + msg.GetMsg(tcode.USERNAME_OR_PASSWORD_ERROR)
 		return
 	}
 	args := make(map[string]interface{})

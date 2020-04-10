@@ -3,6 +3,7 @@ package goodsTypeController
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	tcode "github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
 	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
@@ -25,7 +26,17 @@ func AddGoodsType(c *gin.Context) {
 	if c.ShouldBindJSON(&request) != nil {
 		responseData.Message = msg.GetMsg(tcode.PARAMETER_ERROR)
 	} else {
-		responseData = goodsService.AddGoodsType(request)
+		token := c.Query("token")
+		if token == "" {
+			authToken := c.GetHeader("Authorization")
+			if authToken == "" {
+				responseData.Message = msg.GetMsg(tcode.AUTH_NOT_BEARER)
+			}
+			token = strings.TrimSpace(authToken)
+		}
+		if responseData.Message == "" {
+			responseData = goodsService.AddGoodsType(token, request)
+		}
 	}
 	c.JSON(http.StatusOK, responseData)
 }

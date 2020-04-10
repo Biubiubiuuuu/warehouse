@@ -1,11 +1,8 @@
 package models
 
 import (
-	"errors"
 	"time"
 
-	"github.com/Biubiubiuuuu/warehouse/server/common/tips/code"
-	"github.com/Biubiubiuuuu/warehouse/server/common/tips/msg"
 	"github.com/Biubiubiuuuu/warehouse/server/dbs/mysql"
 )
 
@@ -35,10 +32,7 @@ type GoodsStockData struct {
 // 创建商品库存
 func (g *GoodsStock) AddGoodsStock() error {
 	db := mysql.GetDB()
-	if db.NewRecord(g.GoodsTypeID) {
-		return db.Create(&g).Error
-	}
-	return errors.New(msg.GetMsg(code.STOCK_EXIST))
+	return db.Create(&g).Error
 }
 
 // 修改商品库存信息
@@ -48,9 +42,9 @@ func (g *GoodsStock) UpdateGoodsStock(args map[string]interface{}) error {
 }
 
 // 查看商品库存详情
-func (g *GoodsStock) QueryByGoodsStockID() (goodsStockData GoodsStockData, err error) {
+func (g *GoodsStock) QueryByID() (goodsStockData GoodsStockData, err error) {
 	db := mysql.GetDB()
-	err = db.Table("goods_stock").Select("goods_stock.id, goods_stock.created_at, goods_stock.updated_at, goods_stock.deleted_at, goods_stock.quantity_stock, goods_stock.quantity_sold, goods_stock.quantity_total, goods_stock.quantity_gifts, goods_type.goods_name").Joins("left join goods_type on goods_type.id = goods_stock.id").Where("goods_type.id = ?", g.ID).Scan(&goodsStockData).Error
+	err = db.Table("goods_stock").Select("goods_stock.id, goods_stock.created_at, goods_stock.updated_at, goods_stock.deleted_at, goods_stock.quantity_stock, goods_stock.quantity_sold, goods_stock.quantity_total, goods_stock.quantity_gifts, goods_type.goods_name").Joins("left join goods_type on goods_type.id = goods_stock.id").Where("goods_stock.id = ? OR goods_type.ID", g.ID, g.GoodsTypeID).Scan(&goodsStockData).Error
 	return goodsStockData, err
 }
 

@@ -32,6 +32,13 @@ func (u *UserInfo) QueryUserInfoByID() error {
 	return db.First(&u, u.ID).Error
 }
 
+// 按用户ID查询所有地址信息
+func (u *UserInfo) QueryUserInfoByUserID() (userInfos []UserInfo) {
+	db := mysql.GetDB()
+	db.Where("user_id = ?", u.UserID).Find(&userInfos)
+	return
+}
+
 // 删除用户地址信息（支持批量）
 func (u *UserInfo) DeleteUserInfo(ids []int64) error {
 	db := mysql.GetDB()

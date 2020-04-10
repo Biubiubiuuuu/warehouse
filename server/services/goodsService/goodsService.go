@@ -14,10 +14,8 @@ import (
 /*==========================================商品种类curd==================================*/
 
 // 添加商品种类
-func AddGoodsType(g entity.AddGoodsType) (responseData entity.ResponseData) {
-	admin := models.Admin{
-		Username: g.GoodsCreateAdmin,
-	}
+func AddGoodsType(token string, g entity.AddGoodsType) (responseData entity.ResponseData) {
+	admin := models.Admin{Token: token}
 	if !admin.QueryAdminByUsername() {
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
 		return
@@ -31,7 +29,7 @@ func AddGoodsType(g entity.AddGoodsType) (responseData entity.ResponseData) {
 		GoodsImage:       g.GoodsImage,
 		GoodsBatchNumber: g.GoodsBatchNumber,
 		GoodsDate:        goodsDate,
-		GoodsCreateAdmin: g.GoodsCreateAdmin,
+		GoodsCreateAdmin: admin.Username,
 	}
 	if err := goodsType.AddGoodsType(); err != nil {
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + fmt.Sprintf(",%v%v", g.GoodsName, msg.GetMsg(code.EXIST))
@@ -143,6 +141,7 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 	goodsStock := models.GoodsStock{
 		QuantityTotal: g.QuantityTotal,
 		GoodsTypeID:   g.GoodsTypeID,
+		QuantityStock: g.QuantityTotal,
 	}
 	goodsType := models.GoodsType{}
 	goodsType.ID = g.GoodsTypeID
@@ -151,7 +150,7 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 		return
 	}
 	if err := goodsStock.AddGoodsStock(); err != nil {
-		responseData.Message = err.Error()
+		responseData.Message = msg.GetMsg(tcode.STOCK_EXIST)
 		return
 	}
 	responseData.Status = true
@@ -223,7 +222,7 @@ func QueryGoodsStocksByLimitOffset(pageSize int, page int) (responseData entity.
 
 // 查看商品订单（分页查询）
 func QueryGoodsOrderByLimitOffset(pageSize int, page int) (responseData entity.ResponseData) {
-	goodsOrders := models.QueryGoodsOrderByLimitOffset(pageSize, page)
+	goodsOrders := models.QueryOrderByLimitOffset(pageSize, page)
 	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
 	if len(goodsOrders) == 0 {
 		responseData.Message = msg.GetMsg(tcode.NOTMORE)

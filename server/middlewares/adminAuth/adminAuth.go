@@ -24,7 +24,8 @@ func AdminAuth() gin.HandlerFunc {
 			token = strings.TrimSpace(authToken)
 		}
 		admin := models.Admin{Token: token}
-		if !admin.CheckAdministrator() {
+		user := models.User{Token: token}
+		if !admin.CheckAdministrator() && !user.QueryUser() {
 			code = tcode.NOT_ADMINISTRATOR
 		}
 		if code != tcode.SUCCESS {

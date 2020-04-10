@@ -28,9 +28,9 @@ func (u *User) RegisterUser() error {
 }
 
 // 查询账号是否存在并返回账号信息
-func (u *User) QueryUserByTel() bool {
+func (u *User) QueryUser() bool {
 	db := mysql.GetDB()
-	if err := db.Where("tel = ?", u.Tel).First(&u).Error; err != nil {
+	if err := db.Where("tel = ? OR (token = ? AND token not null)", u.Tel, u.Token).First(&u).Error; err != nil {
 		return false
 	}
 	return true
@@ -40,4 +40,18 @@ func (u *User) QueryUserByTel() bool {
 func (u *User) UpdataUser(args map[string]interface{}) error {
 	db := mysql.GetDB()
 	return db.Model(&u).Update(args).Error
+}
+
+// 查询用户（分页查询）
+func QueryUserByLimitOffset(pageSize int, page int) (users []User) {
+	db := mysql.GetDB()
+	db.Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&users)
+	return
+}
+
+// 总记录数
+func QueryUserCount() (count int) {
+	db := mysql.GetDB()
+	db.Model(&User{}).Count(&count)
+	return count
 }
