@@ -4,6 +4,8 @@ import (
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/adminController"
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/goodsStockController"
 	"github.com/Biubiubiuuuu/warehouse/server/controllers/goodsTypeController"
+	"github.com/Biubiubiuuuu/warehouse/server/controllers/orderController"
+	"github.com/Biubiubiuuuu/warehouse/server/controllers/userController"
 	"github.com/Biubiubiuuuu/warehouse/server/docs"
 	"github.com/Biubiubiuuuu/warehouse/server/helpers/configHelper"
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/adminAuth"
@@ -49,14 +51,24 @@ func InitAdmin(router *gin.Engine) {
 	{
 		apiAdmin.POST("updateAdminPass", adminController.UpdateAdminPass)
 
+		// 用户curd
+		apiUser := apiAdmin.Group("/users")
+		apiUser.GET("queryUserByLimitOffset", userController.QueryUserByLimitOffset)
+
+		// 商品curd
 		apiGoodsType := apiAdmin.Group("/goodsType")
 		apiGoodsType.GET("queryByGoodsTypeID", goodsTypeController.QueryByGoodsTypeID)
 		apiGoodsType.GET("queryGoodsTypesByLimitOffset", goodsTypeController.QueryGoodsTypesByLimitOffset)
 		apiGoodsType.GET("queryAllGoods", goodsTypeController.QueryAllGoods)
 
+		// 库存curd
 		apigoodsStock := apiAdmin.Group("/goodsStock")
 		apigoodsStock.GET("queryGoodsStocksByLimitOffset", goodsStockController.QueryGoodsStocksByLimitOffset)
 		apigoodsStock.GET("queryByGoodsStockID", goodsStockController.QueryByGoodsStockID)
+
+		// 商品订单curd
+		apiOrder := apiAdmin.Group("/order")
+		apiOrder.GET("queryOrderByLimitOffset", orderController.QueryOrderByLimitOffset)
 	}
 	// 管理员 需要管理权限Administrator为Y才能操作
 	apiAdmin.Use(jwt.JWT(), adminAuth.AdminAuth())
@@ -78,14 +90,28 @@ func InitAdmin(router *gin.Engine) {
 		apigoodsStock := apiAdmin.Group("/goodsStock")
 		apigoodsStock.POST("addGoodsStock", goodsStockController.AddGoodsStock)
 		apigoodsStock.PUT("updateGoodsStock", goodsStockController.UpdateGoodsStock)
-
-		// 商品订单curd
-
 	}
 }
 
 // init user
 func InitUser(router *gin.Engine) {
 	//用户路由分组
-	//api := router.Group("/api/v1")
+	apiUser := router.Group("/api/v1")
+	apiUser.POST("login", userController.LoginUser)
+	apiUser.POST("register", userController.RegisterUser)
+	apiUser.Use(jwt.JWT())
+	{
+		apiUser.PUT("updatePass", userController.UpdateUserPass)
+		apiUser.POST("addUserInfo", userController.AddUserInfo)
+		apiUser.GET("queryUserInfoByUserID", userController.QueryUserInfoByUserID)
+		apiUser.GET("queryUserInfoByID", userController.QueryUserInfoByID)
+		apiUser.DELETE("deleteUserInfo", userController.DeleteUserInfo)
+		apiUser.DELETE("deleteUserInfos", userController.DeleteUserInfos)
+
+		// 订单
+		apiUserOrder := apiUser.Group("/user/order")
+		apiUserOrder.POST("addOrder", orderController.AddOrder)
+		apiUserOrder.GET("queryByGoodsOrderID", orderController.QueryByGoodsOrderID)
+		apiUserOrder.GET("queryByOrderUserID", orderController.QueryByOrderUserID)
+	}
 }

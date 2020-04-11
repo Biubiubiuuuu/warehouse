@@ -30,7 +30,7 @@ func (u *User) RegisterUser() error {
 // 查询账号是否存在并返回账号信息
 func (u *User) QueryUser() bool {
 	db := mysql.GetDB()
-	if err := db.Where("tel = ? OR (token = ? AND token not null)", u.Tel, u.Token).First(&u).Error; err != nil {
+	if err := db.Where("tel = ? OR (token = ? AND token IS NOT NULL)", u.Tel, u.Token).First(&u).Error; err != nil {
 		return false
 	}
 	return true

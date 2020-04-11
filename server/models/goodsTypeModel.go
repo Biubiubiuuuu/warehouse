@@ -40,12 +40,16 @@ func (g *GoodsType) UpdateGoodsType(args map[string]interface{}) error {
 }
 
 // 查看商品详情
+// param ID
+// return GoodsType,error
 func (g *GoodsType) QueryByGoodsTypeID() error {
 	db := mysql.GetDB()
 	return db.First(&g, g.ID).Error
 }
 
 // 下架商品
+// param ID
+// return error
 func (g *GoodsType) DeleteGoodsTypes(ids []int64) error {
 	db := mysql.GetDB()
 	tx := db.Begin()
@@ -64,6 +68,8 @@ func (g *GoodsType) DeleteGoodsTypes(ids []int64) error {
 }
 
 // 查询商品种类ID和商品名（支持模糊查询）
+// param GoodsName string 商品名
+// return []GoodsTypeData
 func (g *GoodsType) QueryAllGoods() (goodsTypeDatas []GoodsTypeData) {
 	db := mysql.GetDB()
 	db.Table("goods_type").Select("id, goods_name").Where("goods_name LIKE ?", "%"+g.GoodsName+"%").Scan(&goodsTypeDatas)
@@ -71,13 +77,15 @@ func (g *GoodsType) QueryAllGoods() (goodsTypeDatas []GoodsTypeData) {
 }
 
 // 查看商品种类（分页查询）
+// param pageSize int
+// param page int
 func QueryGoodsTypesByLimitOffset(pageSize int, page int) (goodsTypes []GoodsType) {
 	db := mysql.GetDB()
 	db.Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&goodsTypes)
 	return
 }
 
-// 总记录数
+// 商品总记录数
 func QueryGoodsTypesCount() (count int) {
 	db := mysql.GetDB()
 	db.Model(&GoodsType{}).Count(&count)

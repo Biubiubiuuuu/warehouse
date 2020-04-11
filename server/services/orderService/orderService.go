@@ -11,13 +11,6 @@ import (
 )
 
 // 创建订单
-/*
-请求参数
-先查询商品是否存在  不存在返回error
-检查库存是否充足    不充足  提示
-更新商品库存（加锁）
-订单表添加一条数据
-*/
 func AddOrder(token string, request entity.AddOrder) (responseData entity.ResponseData) {
 	user := models.User{Token: token}
 	if !user.QueryUser() {
@@ -43,7 +36,7 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 		}
 		goodsStock := models.GoodsStock{}
 		goodsStock.GoodsTypeID = item.GoodsTypeID
-		stocks, errStock := goodsStock.QueryByGoodsStockID()
+		stocks, errStock := goodsStock.QueryByID()
 		if errStock != nil {
 			responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + ",该商品库存不存在，待添加"
 			return
@@ -58,11 +51,78 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 			GoodsPrince: g.GoodsPrince,
 			GoodsImage:  g.GoodsImage,
 			GoodsQty:    item.GoodsQty,
+			GoodsTypeID: item.GoodsTypeID,
 		}
+		// 订单总金额
+		str := strconv.FormatInt(item.GoodsQty, 10)
+		float, _ := strconv.ParseFloat(str, 64)
+		order.OrderPrince += g.GoodsPrince * float
 		orderGoodsInfos = append(orderGoodsInfos, orderGoodsInfo)
 	}
 	order.OrderGoodsInfos = orderGoodsInfos
+	// 订单编号 直接取时间戳
+	orderNumber := strconv.Itoa(time.Now().Nanosecond())
+	order.OrderNumber = orderNumber
+	// 订单状态 1.已付款 2.未付款
+	order.OrderStatus = "2"
+	if err := order.AddOrder(); err != nil {
+		responseData.Message = "下单失败"
+		return
+	}
+	responseData.Status = true
+	responseData.Message = "下单成功"
+	return
+}
 
-	goodsOrderNumber := strconv.Itoa(time.Now().Nanosecond())
+// 查询订单详情
+func QueryByGoodsOrderID(id int64) (responseData entity.ResponseData) {
+	order := models.Order{}
+	order.ID = id
+	if err := order.QueryByGoodsOrderID(); err != nil {
+		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR)
+		return
+	}
+	data := make(map[string]interface{})
+	data["orderInfo"] = order
+	responseData.Data = data
+	responseData.Status = true
+	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
+	return
+}
+
+// 查询用户订单
+func QueryByOrderUserID(token string, pageSize int, page int) (responseData entity.ResponseData) {
+	user := models.User{Token: token}
+	if !user.QueryUser() {
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，用户不存在"
+		return
+	}
+	order := models.Order{}
+	order.UserID = user.ID
+	orders := order.QueryByOrderUserID(pageSize, page)
+	if len(orders) == 0 {
+		responseData.Message = msg.GetMsg(tcode.NOTMORE)
+	}
+	data := make(map[string]interface{})
+	data["orders"] = orders
+	responseData.Data = data
+	responseData.Status = true
+	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
+	return
+}
+
+// 查询订单（分页） admin
+func QueryOrderByLimitOffset(pageSize int, page int) (responseData entity.ResponseData) {
+	orders := models.QueryOrderByLimitOffset(pageSize, page)
+	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
+	if len(orders) == 0 {
+		responseData.Message = msg.GetMsg(tcode.NOTMORE)
+	}
+	count := models.QueryOrderCount()
+	data := make(map[string]interface{})
+	data["orders"] = orders
+	data["count"] = count
+	responseData.Data = data
+	responseData.Status = true
 	return
 }

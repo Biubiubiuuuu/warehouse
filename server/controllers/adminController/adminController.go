@@ -116,7 +116,7 @@ func UpdateAdminPass(c *gin.Context) {
 	c.JSON(http.StatusOK, responseData)
 }
 
-// @Summary 分页查询用户(默认前100条) 并返回总记录数
+// @Summary 分页查询管理员(默认前100条) 并返回总记录数
 // @tags 管理员
 // @Accept application/x-www-form-urlencoded
 // @Produce  json

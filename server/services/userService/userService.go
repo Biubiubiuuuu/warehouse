@@ -92,6 +92,7 @@ func AddUserInfo(token string, request entity.AddUserInfo) (responseData entity.
 		return
 	}
 	userInfo := models.UserInfo{
+		Tel:         request.Tel,
 		Provice:     request.Provice,
 		City:        request.City,
 		ShopAddress: request.ShopAddress,
@@ -107,11 +108,10 @@ func AddUserInfo(token string, request entity.AddUserInfo) (responseData entity.
 }
 
 // 查询用户所有地址信息
-func QueryUserInfoByUserID(tel string) (responseData entity.ResponseData) {
-	user := models.User{}
-	user.Tel = tel
+func QueryUserInfoByUserID(token string) (responseData entity.ResponseData) {
+	user := models.User{Token: token}
 	if !user.QueryUser() {
-		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + ",该用户不存在"
+		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，用户不存在"
 		return
 	}
 	userInfo := models.UserInfo{}
@@ -132,7 +132,7 @@ func QueryUserInfoByUserID(tel string) (responseData entity.ResponseData) {
 func QueryUserInfoByID(id int64) (responseData entity.ResponseData) {
 	userInfo := models.UserInfo{}
 	userInfo.ID = id
-	if err := userInfo.QueryUserInfoByID; err != nil {
+	if err := userInfo.QueryUserInfoByID(); err != nil {
 		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR)
 		return
 	}

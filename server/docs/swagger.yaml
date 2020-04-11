@@ -14,9 +14,6 @@ definitions:
       goods_batch_number:
         description: 生产批号
         type: string
-      goods_create_admin:
-        description: 创建人
-        type: string
       goods_date:
         description: 生产日期
         type: string
@@ -49,6 +46,33 @@ definitions:
         description: 商品成本价
         type: number
     type: object
+  entity.AddOrder:
+    properties:
+      order_goods_info:
+        description: 商品信息
+        items:
+          $ref: '#/definitions/entity.OrderGoodsInfo'
+        type: array
+      order_user_info:
+        $ref: '#/definitions/entity.OrderUserInfo'
+        description: 用户信息
+        type: object
+    type: object
+  entity.AddUserInfo:
+    properties:
+      city:
+        description: 城市
+        type: string
+      provice:
+        description: 省
+        type: string
+      shop_address1:
+        description: 门店详细地址
+        type: string
+      tel:
+        description: 收货电话
+        type: string
+    type: object
   entity.DeleteIds:
     properties:
       ids:
@@ -64,13 +88,34 @@ definitions:
       username:
         type: string
     type: object
+  entity.OrderGoodsInfo:
+    properties:
+      goods_qty:
+        description: 商品数量
+        type: integer
+      goods_type_id:
+        description: 商品ID
+        type: integer
+    type: object
+  entity.OrderUserInfo:
+    properties:
+      city:
+        description: 城市
+        type: string
+      provice:
+        description: 省
+        type: string
+      shop_address1:
+        description: 门店详细地址
+        type: string
+      tel:
+        description: 联系电话
+        type: string
+    type: object
   entity.Register:
     properties:
       administrator:
         description: 超级管理员 Y | N
-        type: string
-      online_username:
-        description: 当前登录用户名
         type: string
       password:
         description: 密码
@@ -145,8 +190,30 @@ definitions:
       oldPassword:
         description: 旧密码
         type: string
-      username:
+    type: object
+  entity.UserLogin:
+    properties:
+      password:
+        type: string
+      tel:
+        type: string
+    type: object
+  entity.UserRegister:
+    properties:
+      password:
+        description: 密码
+        type: string
+      tel:
         description: 用户名
+        type: string
+    type: object
+  entity.UserUpdatePass:
+    properties:
+      newPassword:
+        description: 密码
+        type: string
+      oldPassword:
+        description: 旧密码
         type: string
     type: object
 host: '{{.Host}}'
@@ -157,6 +224,31 @@ info:
   title: '{{.Title}}'
   version: '{{.Version}}'
 paths:
+  /api/v1/addUserInfo:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddUserInfo'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 添加用户地址信息
+      tags:
+      - 用户
   /api/v1/admin/addAdmin:
     post:
       consumes:
@@ -521,7 +613,60 @@ paths:
       summary: 管理员登录
       tags:
       - 管理员
+  /api/v1/admin/order/queryOrderByLimitOffset:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询订单(默认前100条) 并返回总记录数
+      tags:
+      - 管理员
   /api/v1/admin/queryAdmins:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询管理员(默认前100条) 并返回总记录数
+      tags:
+      - 管理员
+  /api/v1/admin/updateAdminPass: {}
+  /api/v1/admin/users/queryUserByLimitOffset:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -547,7 +692,230 @@ paths:
       summary: 分页查询用户(默认前100条) 并返回总记录数
       tags:
       - 管理员
-  /api/v1/admin/updateAdminPass: {}
+  /api/v1/deleteUserInfo:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户地址ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除户地址信息
+      tags:
+      - 用户
+  /api/v1/deleteUserInfos:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.DeleteIds'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除户地址信息
+      tags:
+      - 用户
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserLogin'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      summary: 用户登录
+      tags:
+      - 用户
+  /api/v1/queryUserInfoByID:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户地址ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询用户地址信息详情
+      tags:
+      - 用户
+  /api/v1/queryUserInfoByUserID:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询用户所有地址信息
+      tags:
+      - 用户
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserRegister'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      summary: 用户注册
+      tags:
+      - 用户
+  /api/v1/updatePass:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserUpdatePass'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改用户密码
+      tags:
+      - 用户
+  /api/v1/user/order/addOrder:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddOrder'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 添加订单
+      tags:
+      - 用户
+  /api/v1/user/order/queryByGoodsOrderID:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 订单ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询订单详情
+      tags:
+      - 用户
+  /api/v1/user/order/queryByOrderUserID:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询用户订单
+      tags:
+      - 用户
 securityDefinitions:
   ApiKeyAuth:
     in: header

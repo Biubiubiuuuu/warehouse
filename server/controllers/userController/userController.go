@@ -55,7 +55,7 @@ func RegisterUser(c *gin.Context) {
 // @Produce  json
 // @Param body body entity.UserUpdatePass true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/updatePass [UPDATE]
+// @Router /api/v1/updatePass [PUT]
 // @Security ApiKeyAuth
 func UpdateUserPass(c *gin.Context) {
 	responseData := entity.ResponseData{}
@@ -85,7 +85,7 @@ func UpdateUserPass(c *gin.Context) {
 // @Produce  json
 // @Param body body entity.AddUserInfo true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/updatePass [UPDATE]
+// @Router /api/v1/addUserInfo [POST]
 // @Security ApiKeyAuth
 func AddUserInfo(c *gin.Context) {
 	responseData := entity.ResponseData{}
@@ -113,13 +113,22 @@ func AddUserInfo(c *gin.Context) {
 // @tags 用户
 // @Accept  application/json
 // @Produce  json
-// @Param page tel string true "用户手机号"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/queryUserInfoByUserID [GET]
 // @Security ApiKeyAuth
 func QueryUserInfoByUserID(c *gin.Context) {
-	tel := c.DefaultQuery("tel", "")
-	responseData := userService.QueryUserInfoByUserID(tel)
+	responseData := entity.ResponseData{}
+	token := c.Query("token")
+	if token == "" {
+		authToken := c.GetHeader("Authorization")
+		if authToken == "" {
+			responseData.Message = msg.GetMsg(tcode.AUTH_NOT_BEARER)
+		}
+		token = strings.TrimSpace(authToken)
+	}
+	if responseData.Message == "" {
+		responseData = userService.QueryUserInfoByUserID(token)
+	}
 	c.JSON(http.StatusOK, responseData)
 }
 
@@ -127,7 +136,7 @@ func QueryUserInfoByUserID(c *gin.Context) {
 // @tags 用户
 // @Accept  application/json
 // @Produce  json
-// @Param page id string true "用户地址详情ID"
+// @Param id query string true "用户地址ID"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/queryUserInfoByID [GET]
 // @Security ApiKeyAuth
@@ -141,7 +150,7 @@ func QueryUserInfoByID(c *gin.Context) {
 // @tags 用户
 // @Accept  application/json
 // @Produce  json
-// @Param id query string true "id"
+// @Param id query string true "用户地址ID"
 // @Success 200 {object} entity.ResponseData "desc"
 // @Router /api/v1/deleteUserInfo [DELETE]
 // @Security ApiKeyAuth
@@ -180,7 +189,7 @@ func DeleteUserInfos(c *gin.Context) {
 // @Param pageSize query string false "页大小"
 // @Param page query string false "页数"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/queryUserByLimitOffset [GET]
+// @Router /api/v1/admin/users/queryUserByLimitOffset [GET]
 // @Security ApiKeyAuth
 func QueryUserByLimitOffset(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))

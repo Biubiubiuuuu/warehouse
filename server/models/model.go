@@ -19,7 +19,7 @@ type Model struct {
 func Init() {
 	mysql.DB.Init()
 	db := mysql.GetDB()
-	db.AutoMigrate(&Admin{}, &GoodsType{}, &GoodsStock{}, &Order{}, &User{}, &UserInfo{})
+	db.AutoMigrate(&Admin{}, &GoodsType{}, &GoodsStock{}, &Order{}, &User{}, &UserInfo{}, &OrderGoodsInfo{}, &OrderUserInfo{})
 	// 添加默认管理员 username:Admin,password:123456
 	a := Admin{Username: "admin", Password: MD5Helper.EncryptMD5To32Bit("123456"), Administrator: "Y"}
 	if !a.QueryAdminByUsername() {

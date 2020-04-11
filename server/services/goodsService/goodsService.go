@@ -149,8 +149,12 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，该商品种类不存在，请先添加商品种类"
 		return
 	}
-	if err := goodsStock.AddGoodsStock(); err != nil {
+	if _, err := goodsStock.QueryByID(); err == nil {
 		responseData.Message = msg.GetMsg(tcode.STOCK_EXIST)
+		return
+	}
+	if err := goodsStock.AddGoodsStock(); err != nil {
+		responseData.Message = msg.GetMsg(tcode.ADD_SUCCESS)
 		return
 	}
 	responseData.Status = true
@@ -164,7 +168,7 @@ func UpdateGoodsStock(g entity.UpdateGoodsStock) (responseData entity.ResponseDa
 	goodsStock.ID = g.GoodsStockID
 	var data models.GoodsStockData
 	var errQueryByGoodsStockID error
-	if data, errQueryByGoodsStockID = goodsStock.QueryByGoodsStockID(); errQueryByGoodsStockID != nil {
+	if data, errQueryByGoodsStockID = goodsStock.QueryByID(); errQueryByGoodsStockID != nil {
 		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + "，该商品库存不存在，请先添加商品库存信息再修改"
 		return
 	}
@@ -187,7 +191,7 @@ func UpdateGoodsStock(g entity.UpdateGoodsStock) (responseData entity.ResponseDa
 func QueryByGoodsStockID(id int64) (responseData entity.ResponseData) {
 	goodsStock := models.GoodsStock{}
 	goodsStock.ID = id
-	goodsStockData, err := goodsStock.QueryByGoodsStockID()
+	goodsStockData, err := goodsStock.QueryByID()
 	if err != nil {
 		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，该商品库存不存在"
 		return
