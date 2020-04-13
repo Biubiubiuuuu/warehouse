@@ -145,7 +145,7 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 	goodsType := models.GoodsType{}
 	goodsType.ID = g.GoodsTypeID
 	if err := goodsType.QueryByGoodsTypeID(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，该商品种类不存在，请先添加商品种类"
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，该商品种类不存在，请先添加商品种类"
 		return
 	}
 	if _, err := goodsStock.QueryByID(); err == nil {
@@ -153,7 +153,7 @@ func AddGoodsStock(g entity.AddGoodsStock) (responseData entity.ResponseData) {
 		return
 	}
 	if err := goodsStock.AddGoodsStock(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.ADD_SUCCESS)
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR)
 		return
 	}
 	responseData.Status = true

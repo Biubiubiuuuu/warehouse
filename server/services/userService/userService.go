@@ -18,7 +18,7 @@ func LoginUser(request entity.UserLogin, ip string) (responseData entity.Respons
 	}
 	user := models.User{Tel: request.Tel, Password: MD5Helper.EncryptMD5To32Bit(request.Password)}
 	if err := user.LoginUser(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.LOGIN_ERROR)
+		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_ERROR)
 		return
 	}
 	token, err := jwtHelper.GenerateToken(request.Tel, request.Password)
@@ -65,7 +65,7 @@ func UpdateUserPass(token string, request entity.UserUpdatePass) (responseData e
 	}
 	user := models.User{Token: token}
 	if !user.QueryUser() {
-		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，用户不存在"
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + "，用户不存在"
 		return
 	}
 	user = models.User{Tel: user.Tel, Password: MD5Helper.EncryptMD5To32Bit(request.OldPassword)}

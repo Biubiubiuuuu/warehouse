@@ -10,6 +10,7 @@ const (
 	DELETE_SUCCESS                = 10008
 	NOTMORE                       = 10009
 	UPDATE_SUCCESS                = 10014
+	ORDER_SUCCESS                 = 10015
 	TOKEN_ERROR                   = -10001
 	TOKEN_AUTH_ERROR              = -10002
 	TOKEN_TIMEOUT                 = -10003
@@ -27,4 +28,6 @@ const (
 	EXIST                         = -10015
 	NOTNULL                       = -10016
 	STOCK_EXIST                   = -10017
+	OLD_ERROR                     = -10018
+	ORDER_ERROR                   = -10019
 )

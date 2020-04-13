@@ -1,7 +1,6 @@
 package orderService
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -66,13 +65,12 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 	order.OrderNumber = orderNumber
 	// 订单状态 1.已付款 2.未付款
 	order.OrderStatus = "2"
-	fmt.Println(order)
 	if err := order.AddOrder(); err != nil {
-		responseData.Message = "下单失败"
+		responseData.Message = msg.GetMsg(tcode.ORDER_ERROR)
 		return
 	}
 	responseData.Status = true
-	responseData.Message = "下单成功"
+	responseData.Message = msg.GetMsg(tcode.ORDER_SUCCESS)
 	return
 }
 
@@ -96,7 +94,7 @@ func QueryByGoodsOrderID(id int64) (responseData entity.ResponseData) {
 func QueryByOrderUserID(token string, pageSize int, page int) (responseData entity.ResponseData) {
 	user := models.User{Token: token}
 	if !user.QueryUser() {
-		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，用户不存在"
+		responseData.Message = msg.GetMsg(tcode.QUERY_ERROR) + "，用户不存在"
 		return
 	}
 	order := models.Order{}
@@ -104,6 +102,7 @@ func QueryByOrderUserID(token string, pageSize int, page int) (responseData enti
 	orders := order.QueryByOrderUserID(pageSize, page)
 	if len(orders) == 0 {
 		responseData.Message = msg.GetMsg(tcode.NOTMORE)
+		return
 	}
 	data := make(map[string]interface{})
 	data["orders"] = orders
@@ -119,6 +118,7 @@ func QueryOrderByLimitOffset(pageSize int, page int) (responseData entity.Respon
 	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
 	if len(orders) == 0 {
 		responseData.Message = msg.GetMsg(tcode.NOTMORE)
+		return
 	}
 	count := models.QueryOrderCount()
 	data := make(map[string]interface{})

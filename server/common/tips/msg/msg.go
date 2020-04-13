@@ -31,6 +31,9 @@ var MsgFlags = map[int]string{
 	c.EXIST:                         "已存在",
 	c.NOTNULL:                       "参数不能为空",
 	c.STOCK_EXIST:                   "该商品已创建库存，请直接修改库存信息",
+	c.OLD_ERROR:                     "旧密码错误",
+	c.ORDER_SUCCESS:                 "下单成功",
+	c.ORDER_ERROR:                   "下单失败",
 }
 
 // get return msg

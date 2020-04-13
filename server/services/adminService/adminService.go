@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// 登录
+// 管理员登录
 func LoginAdmin(login entity.Login, ip string) (responseData entity.ResponseData) {
 	if login.Username == "" || login.Password == "" {
 		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_NOT_NULL)
@@ -18,7 +18,7 @@ func LoginAdmin(login entity.Login, ip string) (responseData entity.ResponseData
 	}
 	admin := models.Admin{Username: login.Username, Password: MD5Helper.EncryptMD5To32Bit(login.Password)}
 	if err := admin.LoginAdmin(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.LOGIN_ERROR)
+		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_ERROR)
 		return
 	}
 	token, err := jwtHelper.GenerateToken(login.Username, login.Password)
@@ -41,7 +41,7 @@ func LoginAdmin(login entity.Login, ip string) (responseData entity.ResponseData
 	return
 }
 
-// 注册
+// 添加管理员账号
 func AddAdmin(add entity.Register) (responseData entity.ResponseData) {
 	if add.Username == "" || add.Password == "" {
 		responseData.Message = msg.GetMsg(tcode.USERNAME_OR_PASSWORD_NOT_NULL)
@@ -60,7 +60,7 @@ func AddAdmin(add entity.Register) (responseData entity.ResponseData) {
 	return
 }
 
-// 查询
+// 查询管理员账号
 func QueryByLimitOffset(pageSize int, page int) (responseData entity.ResponseData) {
 	admins := models.QueryAdminByLimitOffset(pageSize, page)
 	responseData.Message = msg.GetMsg(tcode.QUERY_SUCCESS)
@@ -76,7 +76,7 @@ func QueryByLimitOffset(pageSize int, page int) (responseData entity.ResponseDat
 	return
 }
 
-// 修改密码
+// 修改管理员密码
 func UpdateAdminPass(token string, updatePass entity.UpdatePass) (responseData entity.ResponseData) {
 	if updatePass.NewPassword == "" || updatePass.OldPassword == "" {
 		responseData.Message = "密码不能为空！"
@@ -89,7 +89,7 @@ func UpdateAdminPass(token string, updatePass entity.UpdatePass) (responseData e
 	}
 	admin = models.Admin{Username: admin.Username, Password: MD5Helper.EncryptMD5To32Bit(updatePass.OldPassword)}
 	if err := admin.LoginAdmin(); err != nil {
-		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + ":" + msg.GetMsg(tcode.USERNAME_OR_PASSWORD_ERROR)
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + "；" + msg.GetMsg(tcode.OLD_ERROR)
 		return
 	}
 	args := make(map[string]interface{})
