@@ -15,9 +15,6 @@ import (
 // JWT middleware validation
 // param query url "token"
 // param header "Authorization"
-// JWT middleware validation
-// param query url "token"
-// param header "Authorization"
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		code := tcode.SUCCESS

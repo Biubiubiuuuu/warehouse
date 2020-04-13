@@ -20,8 +20,7 @@ var (
 	JwtName            string
 	Version            string
 	LogDir             string
-	LogName            string
-	LogLevel           string
+	ImageDir           string
 	MaxIdleConns       string
 	MaxOpenConns       string
 )
@@ -60,9 +59,8 @@ func LoadApp() {
 	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
 	JwtName = sec.Key("JWT_NAME").MustString("token")
 	Version = sec.Key("VERSION").MustString("1.0")
-	LogDir = sec.Key("LOGDIR").MustString("")
-	LogName = sec.Key("LOGFILENAME").MustString("lottery.log")
-	LogLevel = sec.Key("LOGLEVEL").MustString("info")
+	LogDir = sec.Key("LOGDIR").MustString("static/logger/")
+	ImageDir = sec.Key("IMAGEDIR").MustString("static/image/")
 }
 
 func LoadMysql() {

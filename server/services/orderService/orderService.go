@@ -49,7 +49,7 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 			GoodsName:   g.GoodsName,
 			GoodsSpecs:  g.GoodsSpecs,
 			GoodsPrince: g.GoodsPrince,
-			GoodsImage:  g.GoodsImage,
+			GoodsImages: g.GoodsImages,
 			GoodsQty:    item.GoodsQty,
 			GoodsTypeID: item.GoodsTypeID,
 		}

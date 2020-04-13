@@ -28,7 +28,8 @@ func Init() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.Default()
-
+	// 静态资源路径 配置信息为 /static 开头 或者 自定义
+	router.Static("/static", "./static")
 	//允许跨域请求
 	router.Use(cross.Cors())
 	InitAdmin(router)

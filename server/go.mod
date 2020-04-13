@@ -34,4 +34,5 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
+	github.com/xinliangnote/go-util v0.0.0-20200323134426-527984dc34bf
 )

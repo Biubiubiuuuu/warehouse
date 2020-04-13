@@ -14,13 +14,20 @@ import (
 /*==========================================商品种类curd==================================*/
 
 // 添加商品种类
-func AddGoodsType(token string, g entity.AddGoodsType) (responseData entity.ResponseData) {
+func AddGoodsType(token string, images []string, g entity.AddGoodsType) (responseData entity.ResponseData) {
 	admin := models.Admin{Token: token}
 	if !admin.QueryAdminByUsername() {
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
 		return
 	}
 	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
+	var goodsImages []models.GoodsImage
+	for _, file := range images {
+		goodsImage := models.GoodsImage{
+			GoodsImageFiles: file,
+		}
+		goodsImages = append(goodsImages, goodsImage)
+	}
 	goodsType := models.GoodsType{
 		GoodsName:        g.GoodsName,
 		GoodsSpecs:       g.GoodsSpecs,
@@ -29,6 +36,7 @@ func AddGoodsType(token string, g entity.AddGoodsType) (responseData entity.Resp
 		GoodsBatchNumber: g.GoodsBatchNumber,
 		GoodsDate:        goodsDate,
 		GoodsCreateAdmin: admin.Username,
+		GoodsImages:      goodsImages,
 	}
 	if err := goodsType.AddGoodsType(); err != nil {
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + fmt.Sprintf(",%v%v", g.GoodsName, msg.GetMsg(code.EXIST))
@@ -40,7 +48,12 @@ func AddGoodsType(token string, g entity.AddGoodsType) (responseData entity.Resp
 }
 
 // 修改商品种类信息
-func UpdateGoodsType(g entity.UpdateGoodsType) (responseData entity.ResponseData) {
+func UpdateGoodsType(token string, images []string, g entity.UpdateGoodsType) (responseData entity.ResponseData) {
+	admin := models.Admin{Token: token}
+	if !admin.QueryAdminByUsername() {
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
+		return
+	}
 	goodsType := models.GoodsType{}
 	goodsType.ID = g.GoodsID
 	if err := goodsType.QueryByGoodsTypeID(); err != nil {
@@ -48,12 +61,19 @@ func UpdateGoodsType(g entity.UpdateGoodsType) (responseData entity.ResponseData
 		return
 	}
 	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
+	var goodsImages []models.GoodsImage
+	for _, file := range images {
+		goodsImage := models.GoodsImage{
+			GoodsImageFiles: file,
+		}
+		goodsImages = append(goodsImages, goodsImage)
+	}
 	args := map[string]interface{}{
 		"GoodsName":        g.GoodsName,
 		"GoodsSpecs":       g.GoodsSpecs,
 		"GoodsUnitPrince":  g.GoodsUnitPrince,
 		"GoodsPrince ":     g.GoodsPrince,
-		"GoodsImage":       g.GoodsImage,
+		"GoodsImage":       goodsImages,
 		"GoodsBatchNumber": g.GoodsBatchNumber,
 		"GoodsDate":        goodsDate,
 		"GoodsState":       g.GoodsState,

@@ -10,16 +10,22 @@ import (
 // 商品种类
 type GoodsType struct {
 	Model
-	GoodsName           string    `gorm:"not null;unique;size:50" json:"goods_name"` // 商品名称
-	GoodsSpecs          string    `gorm:"size:2;default:1" json:"goods_specs"`       // 商品规格 1.盒 2.瓶 3.支
-	GoodsUnitPrince     float64   `json:"goods_unitprince"`                          // 商品成本价
-	GoodsPrince         float64   `json:"goods_prince"`                              // 商品销售价
-	GoodsDiscountPrince float64   `json:"goods_discount_prince"`                     // 商品折扣价
-	GoodsImage          string    `json:"goods_image"`                               // 商品图片
-	GoodsBatchNumber    string    `gorm:"size:50" json:"goods_batch_number"`         // 生产批号
-	GoodsDate           time.Time `json:"goods_date"`                                // 生产日期
-	GoodsState          string    `gorm:"size:2;default:2" json:"goods_state"`       // 商品状态 1.下架  2.在售
-	GoodsCreateAdmin    string    `gorm:"not null;" json:"goods_create_aAdmin"`      // 创建人
+	GoodsName           string       `gorm:"not null;unique;size:50" json:"goods_name"`                            // 商品名称
+	GoodsSpecs          string       `gorm:"size:2;default:1" json:"goods_specs"`                                  // 商品规格 1.盒 2.瓶 3.支
+	GoodsUnitPrince     float64      `json:"goods_unitprince"`                                                     // 商品成本价
+	GoodsPrince         float64      `json:"goods_prince"`                                                         // 商品销售价
+	GoodsDiscountPrince float64      `json:"goods_discount_prince"`                                                // 商品折扣价
+	GoodsImages         []GoodsImage `gorm:"foreignkey:GoodsTypeID;association_foreignkey:ID" json:"goods_images"` // 商品图片
+	GoodsBatchNumber    string       `gorm:"size:50" json:"goods_batch_number"`                                    // 生产批号
+	GoodsDate           time.Time    `json:"goods_date"`                                                           // 生产日期
+	GoodsState          string       `gorm:"size:2;default:2" json:"goods_state"`                                  // 商品状态 1.下架  2.在售
+	GoodsCreateAdmin    string       `gorm:"not null;" json:"goods_create_aAdmin"`                                 // 创建人
+}
+
+type GoodsImage struct {
+	ID              int64
+	GoodsImageFiles string `json:"goods_image_files"`                     // 商品图片路径
+	GoodsTypeID     int64  `gorm:"not null;unique;" json:"goods_type_id"` // 商品种类ID
 }
 
 type GoodsTypeData struct {
@@ -44,7 +50,7 @@ func (g *GoodsType) UpdateGoodsType(args map[string]interface{}) error {
 // return GoodsType,error
 func (g *GoodsType) QueryByGoodsTypeID() error {
 	db := mysql.GetDB()
-	return db.First(&g, g.ID).Error
+	return db.First(&g).Model(&g).Related(&g.GoodsImages).Find(&g).Error
 }
 
 // 下架商品
@@ -81,7 +87,7 @@ func (g *GoodsType) QueryAllGoods() (goodsTypeDatas []GoodsTypeData) {
 // param page int
 func QueryGoodsTypesByLimitOffset(pageSize int, page int) (goodsTypes []GoodsType) {
 	db := mysql.GetDB()
-	db.Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&goodsTypes)
+	db.Preload("GoodsImages").Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&goodsTypes)
 	return
 }
 

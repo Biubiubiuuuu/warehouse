@@ -9,43 +9,6 @@ definitions:
         description: 总数量
         type: integer
     type: object
-  entity.AddGoodsType:
-    properties:
-      goods_batch_number:
-        description: 生产批号
-        type: string
-      goods_date:
-        description: 生产日期
-        type: string
-      goods_image:
-        description: 商品图片
-        type: string
-      goods_name:
-        description: 商品名称
-        type: string
-      goods_prince:
-        description: 商品销售价
-        type: number
-      goods_specs:
-        default: "1"
-        description: 商品规格 1.盒 2.瓶 3.支
-        enum:
-        - "1"
-        - "2"
-        - "3"
-        type: string
-      goods_state:
-        default: "2"
-        description: 商品状态 1.下架  2.在售
-        enum:
-        - "1"
-        - "2"
-        - "3"
-        type: string
-      goods_unitprince:
-        description: 商品成本价
-        type: number
-    type: object
   entity.AddOrder:
     properties:
       goods_details:
@@ -126,46 +89,6 @@ definitions:
       goods_stock_id:
         description: 库存ID
         type: integer
-    type: object
-  entity.UpdateGoodsType:
-    properties:
-      goods_batch_number:
-        description: 生产批号
-        type: string
-      goods_date:
-        description: 生产日期
-        type: string
-      goods_id:
-        description: 商品ID
-        type: integer
-      goods_image:
-        description: 商品图片
-        type: string
-      goods_name:
-        description: 商品名称
-        type: string
-      goods_prince:
-        description: 商品销售价
-        type: number
-      goods_specs:
-        default: "1"
-        description: 商品规格 1.盒 2.瓶 3.支
-        enum:
-        - "1"
-        - "2"
-        - "3"
-        type: string
-      goods_state:
-        default: "2"
-        description: 商品状态 1.下架  2.在售
-        enum:
-        - "1"
-        - "2"
-        - "3"
-        type: string
-      goods_unitprince:
-        description: 商品成本价
-        type: number
     type: object
   entity.UpdatePass:
     properties:
@@ -424,15 +347,41 @@ paths:
   /api/v1/admin/goodsType/addGoodsType:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       parameters:
-      - description: body
-        in: body
-        name: body
+      - description: 商品名称
+        in: formData
+        name: goods_name
         required: true
-        schema:
-          $ref: '#/definitions/entity.AddGoodsType'
-          type: object
+        type: string
+      - description: 商品规格 1.盒 2.瓶 3.支
+        in: formData
+        name: goods_specs
+        type: string
+      - description: 商品成本价
+        in: formData
+        name: goods_unitprince
+        type: float
+      - description: 商品销售价
+        in: formData
+        name: goods_prince
+        type: float
+      - description: 商品图片
+        in: formData
+        name: goods_image
+        type: file
+      - description: 生产批号
+        in: formData
+        name: goods_batch_number
+        type: string
+      - description: 生产日期
+        in: formData
+        name: goods_date
+        type: string
+      - description: 商品状态 1.下架  2.在售
+        in: formData
+        name: goods_state
+        type: string
       produces:
       - application/json
       responses:
@@ -568,15 +517,46 @@ paths:
   /api/v1/admin/goodsType/updateGoodsType:
     put:
       consumes:
-      - application/json
+      - multipart/form-data
       parameters:
-      - description: body
-        in: body
-        name: body
+      - description: 商品ID
+        in: formData
+        name: goods_id
         required: true
-        schema:
-          $ref: '#/definitions/entity.UpdateGoodsType'
-          type: object
+        type: integer
+      - description: 商品名称
+        in: formData
+        name: goods_name
+        required: true
+        type: string
+      - description: 商品规格 1.盒 2.瓶 3.支
+        in: formData
+        name: goods_specs
+        type: string
+      - description: 商品成本价
+        in: formData
+        name: goods_unitprince
+        type: float
+      - description: 商品销售价
+        in: formData
+        name: goods_prince
+        type: float
+      - description: 商品图片
+        in: formData
+        name: goods_image
+        type: file
+      - description: 生产批号
+        in: formData
+        name: goods_batch_number
+        type: string
+      - description: 生产日期
+        in: formData
+        name: goods_date
+        type: string
+      - description: 商品状态 1.下架  2.在售
+        in: formData
+        name: goods_state
+        type: string
       produces:
       - application/json
       responses:
