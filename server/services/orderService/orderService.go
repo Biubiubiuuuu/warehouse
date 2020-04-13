@@ -1,6 +1,7 @@
 package orderService
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -19,15 +20,15 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 	}
 	order := models.Order{
 		UserID: user.ID,
-		OrderUserInfo: models.OrderUserInfo{
-			Provice:     request.OrderUserInfo.Provice,
-			City:        request.OrderUserInfo.City,
-			ShopAddress: request.OrderUserInfo.ShopAddress,
-			Tel:         request.OrderUserInfo.Tel,
+		OrderUserDetail: models.OrderUserDetail{
+			Provice:     request.UserDetails.Provice,
+			City:        request.UserDetails.City,
+			ShopAddress: request.UserDetails.ShopAddress,
+			Tel:         request.UserDetails.Tel,
 		},
 	}
-	var orderGoodsInfos []models.OrderGoodsInfo
-	for _, item := range request.OrderGoodsInfo {
+	var arr []models.OrderGoodsDetail
+	for _, item := range request.GoodsDetails {
 		g := models.GoodsType{}
 		g.ID = item.GoodsTypeID
 		if err := g.QueryByGoodsTypeID(); err != nil {
@@ -41,11 +42,11 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 			responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + ",该商品库存不存在，待添加"
 			return
 		}
-		if stocks.QuantityStock <= 0 {
+		if stocks.QuantityStock <= 0 || stocks.QuantityStock < item.GoodsQty {
 			responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + ",该商品库存不足"
 			return
 		}
-		orderGoodsInfo := models.OrderGoodsInfo{
+		goodsDetail := models.OrderGoodsDetail{
 			GoodsName:   g.GoodsName,
 			GoodsSpecs:  g.GoodsSpecs,
 			GoodsPrince: g.GoodsPrince,
@@ -57,14 +58,15 @@ func AddOrder(token string, request entity.AddOrder) (responseData entity.Respon
 		str := strconv.FormatInt(item.GoodsQty, 10)
 		float, _ := strconv.ParseFloat(str, 64)
 		order.OrderPrince += g.GoodsPrince * float
-		orderGoodsInfos = append(orderGoodsInfos, orderGoodsInfo)
+		arr = append(arr, goodsDetail)
 	}
-	order.OrderGoodsInfos = orderGoodsInfos
+	order.OrderGoodsDetails = arr
 	// 订单编号 直接取时间戳
 	orderNumber := strconv.Itoa(time.Now().Nanosecond())
 	order.OrderNumber = orderNumber
 	// 订单状态 1.已付款 2.未付款
 	order.OrderStatus = "2"
+	fmt.Println(order)
 	if err := order.AddOrder(); err != nil {
 		responseData.Message = "下单失败"
 		return

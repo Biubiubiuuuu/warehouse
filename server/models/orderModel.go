@@ -1,25 +1,23 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/Biubiubiuuuu/warehouse/server/dbs/mysql"
 )
 
 // 商品订单
 type Order struct {
 	Model
-	UserID          int64            `json:"user_id"`                                              // 用户ID
-	OrderNumber     string           `json:"order_number"`                                         // 订单编号
-	OrderPrince     float64          `json:"order_prince"`                                         // 成交总金额
-	OrderStatus     string           `gorm:"size:2;default:2" json:"order_status"`                 // 订单状态 1.已付款 2.未付款
-	OrderGoodsInfos []OrderGoodsInfo `gorm:"many2many:order_goods_infos" json:"order_goods_infos"` // 订单商品信息
-	OrderUserInfo   OrderUserInfo    `gorm:"foreignkey:OrderUserInfoID" json:"order_user_info"`    // 订单用户信息
-	OrderUserInfoID int64            `json:"-"`
+	UserID            int64              `json:"user_id"`                                                                 // 用户ID
+	OrderNumber       string             `json:"order_number"`                                                            // 订单编号
+	OrderPrince       float64            `json:"order_prince"`                                                            // 成交总金额
+	OrderStatus       string             `gorm:"size:2;default:2" json:"order_status"`                                    // 订单状态 1.已付款 2.未付款
+	OrderGoodsDetails []OrderGoodsDetail `gorm:"foreignkey:OrderID;association_foreignkey:ID" json:"order_goods_details"` // 订单商品信息
+	OrderUserDetail   OrderUserDetail    `json:"order_user_details"`                                                      // 订单用户信息
+	OrderUserDetailID int64              `json:"order_user_detail_id"`                                                    // 收件人地址ID
 }
 
 // 订单商品详情
-type OrderGoodsInfo struct {
+type OrderGoodsDetail struct {
 	ID          int64
 	GoodsName   string  `json:"goods_name"`                          // 商品名称
 	GoodsSpecs  string  `gorm:"size:2;default:1" json:"goods_specs"` // 商品规格 1.盒 2.瓶 3.支
@@ -27,11 +25,11 @@ type OrderGoodsInfo struct {
 	GoodsImage  string  `json:"goods_image"`                         // 商品图片
 	GoodsQty    int64   `json:"goods_qty"`                           // 商品购买数量
 	GoodsTypeID int64   `json:"goods_type_id"`                       // 商品ID
-	OrderId     int64   `gorm:"INDEX" json:"order_id"`               // 订单ID
+	OrderID     int64   `gorm:"INDEX" json:"order_id"`               // 订单ID
 }
 
-// 订单用户详情
-type OrderUserInfo struct {
+// 订单收件地址详情
+type OrderUserDetail struct {
 	ID          int64
 	Provice     string `json:"provice"`       // 省
 	City        string `json:"city"`          // 城市
@@ -47,7 +45,7 @@ func (g *Order) AddOrder() error {
 		tx.Rollback()
 		return err
 	}
-	for _, item := range g.OrderGoodsInfos {
+	for _, item := range g.OrderGoodsDetails {
 		goodsStock := GoodsStock{}
 		goodsStock.GoodsTypeID = item.GoodsTypeID
 		var goodsStockData GoodsStockData
@@ -57,8 +55,10 @@ func (g *Order) AddOrder() error {
 			return queryErr
 		}
 		quantityStock := goodsStockData.QuantityStock - item.GoodsQty
+		quantitySold := goodsStockData.QuantitySold + item.GoodsQty
 		args := map[string]interface{}{
 			"QuantityStock": quantityStock,
+			"QuantitySold":  quantitySold,
 		}
 		if err := goodsStock.UpdateGoodsStock(args); err != nil {
 			tx.Rollback()
@@ -78,27 +78,22 @@ func (g *Order) UpdateOrderStatus() error {
 // 查看商品订单详情
 func (g *Order) QueryByGoodsOrderID() error {
 	db := mysql.GetDB()
-	var orderInfo Order
-	db.Where("id = ?", g.ID).First(&orderInfo)
-	err := db.Model(&orderInfo).Related(&orderInfo.OrderUserInfo).Related(&orderInfo.OrderGoodsInfos).Find(&orderInfo).Error
+	err := db.First(&g).Model(&g).Related(&g.OrderUserDetail).Related(&g.OrderGoodsDetails).Find(&g).Error
 	return err
 }
 
 // 查看用户订单
 func (g *Order) QueryByOrderUserID(pageSize int, page int) (orders []Order) {
-	var list []Order
 	db := mysql.GetDB()
-	err := db.Preload("OrderGoodsInfos").Preload("OrderUserInfo").Where("user_id = ?", g.UserID).Limit(pageSize).Offset((page - 1) * pageSize).Find(&list).Error
-	fmt.Println(err.Error())
-	return list
+	db.Where("user_id = ?", g.UserID).Preload("OrderUserDetail").Preload("OrderGoodsDetails").Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&orders)
+	return
 }
 
 // 查看商品订单（分页查询）
 func QueryOrderByLimitOffset(pageSize int, page int) (orders []Order) {
-	var list []Order
 	db := mysql.GetDB()
-	db.Preload("OrderUserInfo").Preload("OrderGoodsInfo").Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&list)
-	return list
+	db.Preload("OrderUserDetail").Preload("OrderGoodsDetails").Limit(pageSize).Offset((page - 1) * pageSize).Order("created_at desc").Find(&orders)
+	return
 }
 
 // 总记录数

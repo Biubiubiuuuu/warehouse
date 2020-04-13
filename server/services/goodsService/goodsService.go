@@ -26,7 +26,6 @@ func AddGoodsType(token string, g entity.AddGoodsType) (responseData entity.Resp
 		GoodsSpecs:       g.GoodsSpecs,
 		GoodsUnitPrince:  g.GoodsUnitPrince,
 		GoodsPrince:      g.GoodsPrince,
-		GoodsImage:       g.GoodsImage,
 		GoodsBatchNumber: g.GoodsBatchNumber,
 		GoodsDate:        goodsDate,
 		GoodsCreateAdmin: admin.Username,

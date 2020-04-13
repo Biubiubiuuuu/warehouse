@@ -30,7 +30,6 @@ type AddGoodsType struct {
 	GoodsSpecs       string  `json:"goods_specs" enums:"1,2,3" default:"1"` // 商品规格 1.盒 2.瓶 3.支
 	GoodsUnitPrince  float64 `json:"goods_unitprince"`                      // 商品成本价
 	GoodsPrince      float64 `json:"goods_prince"`                          // 商品销售价
-	GoodsImage       string  `json:"goods_image"`                           // 商品图片
 	GoodsBatchNumber string  `json:"goods_batch_number"`                    // 生产批号
 	GoodsDate        string  `json:"goods_date"`                            // 生产日期
 	GoodsState       string  `json:"goods_state" enums:"1,2,3" default:"2"` // 商品状态 1.下架  2.在售
@@ -89,16 +88,16 @@ type AddUserInfo struct {
 
 // 下单请求
 type AddOrder struct {
-	OrderUserInfo  OrderUserInfo    `json:"order_user_info"`  // 用户信息
-	OrderGoodsInfo []OrderGoodsInfo `json:"order_goods_info"` // 商品信息
+	UserDetails  UserDetails    `json:"user_details"`  // 用户信息
+	GoodsDetails []GoodsDetails `json:"goods_details"` // 商品信息
 }
 
-type OrderGoodsInfo struct {
+type GoodsDetails struct {
 	GoodsTypeID int64 `json:"goods_type_id"` // 商品ID
 	GoodsQty    int64 `json:"goods_qty"`     // 商品数量
 }
 
-type OrderUserInfo struct {
+type UserDetails struct {
 	Provice     string `json:"provice"`       // 省
 	City        string `json:"city"`          // 城市
 	ShopAddress string `json:"shop_address1"` // 门店详细地址

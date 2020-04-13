@@ -48,13 +48,13 @@ definitions:
     type: object
   entity.AddOrder:
     properties:
-      order_goods_info:
+      goods_details:
         description: 商品信息
         items:
-          $ref: '#/definitions/entity.OrderGoodsInfo'
+          $ref: '#/definitions/entity.GoodsDetails'
         type: array
-      order_user_info:
-        $ref: '#/definitions/entity.OrderUserInfo'
+      user_details:
+        $ref: '#/definitions/entity.UserDetails'
         description: 用户信息
         type: object
     type: object
@@ -81,14 +81,7 @@ definitions:
           type: integer
         type: array
     type: object
-  entity.Login:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  entity.OrderGoodsInfo:
+  entity.GoodsDetails:
     properties:
       goods_qty:
         description: 商品数量
@@ -97,19 +90,11 @@ definitions:
         description: 商品ID
         type: integer
     type: object
-  entity.OrderUserInfo:
+  entity.Login:
     properties:
-      city:
-        description: 城市
+      password:
         type: string
-      provice:
-        description: 省
-        type: string
-      shop_address1:
-        description: 门店详细地址
-        type: string
-      tel:
-        description: 联系电话
+      username:
         type: string
     type: object
   entity.Register:
@@ -189,6 +174,21 @@ definitions:
         type: string
       oldPassword:
         description: 旧密码
+        type: string
+    type: object
+  entity.UserDetails:
+    properties:
+      city:
+        description: 城市
+        type: string
+      provice:
+        description: 省
+        type: string
+      shop_address1:
+        description: 门店详细地址
+        type: string
+      tel:
+        description: 联系电话
         type: string
     type: object
   entity.UserLogin:
@@ -903,6 +903,15 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: 页大小
+        in: query
+        name: pageSize
+        type: string
+      - description: 页数
+        in: query
+        name: page
+        type: string
       produces:
       - application/json
       responses:

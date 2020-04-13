@@ -1106,6 +1106,20 @@
                     "用户"
                 ],
                 "summary": "查询用户订单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页数",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -1184,17 +1198,17 @@
         "entity.AddOrder": {
             "type": "object",
             "properties": {
-                "order_goods_info": {
+                "goods_details": {
                     "description": "商品信息",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.OrderGoodsInfo"
+                        "$ref": "#/definitions/entity.GoodsDetails"
                     }
                 },
-                "order_user_info": {
+                "user_details": {
                     "description": "用户信息",
                     "type": "object",
-                    "$ref": "#/definitions/entity.OrderUserInfo"
+                    "$ref": "#/definitions/entity.UserDetails"
                 }
             }
         },
@@ -1231,18 +1245,7 @@
                 }
             }
         },
-        "entity.Login": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.OrderGoodsInfo": {
+        "entity.GoodsDetails": {
             "type": "object",
             "properties": {
                 "goods_qty": {
@@ -1255,23 +1258,13 @@
                 }
             }
         },
-        "entity.OrderUserInfo": {
+        "entity.Login": {
             "type": "object",
             "properties": {
-                "city": {
-                    "description": "城市",
+                "password": {
                     "type": "string"
                 },
-                "provice": {
-                    "description": "省",
-                    "type": "string"
-                },
-                "shop_address1": {
-                    "description": "门店详细地址",
-                    "type": "string"
-                },
-                "tel": {
-                    "description": "联系电话",
+                "username": {
                     "type": "string"
                 }
             }
@@ -1382,6 +1375,27 @@
                 },
                 "oldPassword": {
                     "description": "旧密码",
+                    "type": "string"
+                }
+            }
+        },
+        "entity.UserDetails": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "description": "城市",
+                    "type": "string"
+                },
+                "provice": {
+                    "description": "省",
+                    "type": "string"
+                },
+                "shop_address1": {
+                    "description": "门店详细地址",
+                    "type": "string"
+                },
+                "tel": {
+                    "description": "联系电话",
                     "type": "string"
                 }
             }
