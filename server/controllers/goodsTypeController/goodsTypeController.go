@@ -23,7 +23,7 @@ import (
 // @Param goods_specs formData string false "商品规格 1.盒 2.瓶 3.支"
 // @Param goods_unitprince formData float false "商品成本价"
 // @Param goods_prince formData float false "商品销售价"
-// @Param goods_image formData file false "商品图片"
+// @Param goods_image[] formData file false "商品图片"
 // @Param goods_batch_number formData string false "生产批号"
 // @Param goods_date formData string false "生产日期"
 // @Param goods_state formData string false "商品状态 1.下架  2.在售"
@@ -58,24 +58,32 @@ func AddGoodsType(c *gin.Context) {
 		GoodsDate:        goods_date,
 		GoodsState:       goods_state,
 	}
-	file, _ := c.FormFile("goods_image")
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	// 多商品图片
 	var imgs []string
-	// 文件名 避免重复取uuid
-	var filename string
-	uuid, _ := uuid.NewUUID()
-	arr := strings.Split(file.Filename, ".")
-	if strings.EqualFold(arr[1], "png") {
-		filename = uuid.String() + ".png"
-	} else {
-		filename = uuid.String() + ".jpg"
-	}
-	pathFile := configHelper.ImageDir
-	if !fileHelper.IsExist(pathFile) {
-		fileHelper.CreateDir(pathFile)
-	}
-	pathFile = pathFile + filename
-	if err := c.SaveUploadedFile(file, pathFile); err == nil {
-		imgs = append(imgs, pathFile)
+	form, _ := c.MultipartForm()
+	files := form.File["goods_image[]"]
+	for _, file := range files {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[1], "png") {
+			filename = uuid.String() + ".png"
+		} else {
+			filename = uuid.String() + ".jpg"
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			imgs = append(imgs, host+"/"+pathFile)
+		}
 	}
 	if responseData.Message == "" {
 		responseData = goodsService.AddGoodsType(token, imgs, request)
@@ -92,7 +100,7 @@ func AddGoodsType(c *gin.Context) {
 // @Param goods_specs formData string false "商品规格 1.盒 2.瓶 3.支"
 // @Param goods_unitprince formData float false "商品成本价"
 // @Param goods_prince formData float false "商品销售价"
-// @Param goods_image formData file false "商品图片"
+// @Param goods_image[] formData file false "商品图片"
 // @Param goods_batch_number formData string false "生产批号"
 // @Param goods_date formData string false "生产日期"
 // @Param goods_state formData string false "商品状态 1.下架  2.在售"
@@ -130,24 +138,32 @@ func UpdateGoodsType(c *gin.Context) {
 		GoodsDate:        goods_date,
 		GoodsState:       goods_state,
 	}
-	file, _ := c.FormFile("goods_image")
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	// 多商品图片
 	var imgs []string
-	// 文件名 避免重复取uuid
-	var filename string
-	uuid, _ := uuid.NewUUID()
-	arr := strings.Split(file.Filename, ".")
-	if strings.EqualFold(arr[1], "png") {
-		filename = uuid.String() + ".png"
-	} else {
-		filename = uuid.String() + ".jpg"
-	}
-	pathFile := configHelper.ImageDir
-	if !fileHelper.IsExist(pathFile) {
-		fileHelper.CreateDir(pathFile)
-	}
-	pathFile = pathFile + filename
-	if err := c.SaveUploadedFile(file, pathFile); err == nil {
-		imgs = append(imgs, pathFile)
+	form, _ := c.MultipartForm()
+	files := form.File["goods_image[]"]
+	for _, file := range files {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[1], "png") {
+			filename = uuid.String() + ".png"
+		} else {
+			filename = uuid.String() + ".jpg"
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			imgs = append(imgs, host+"/"+pathFile)
+		}
 	}
 	if responseData.Message == "" {
 		responseData = goodsService.UpdateGoodsType(token, imgs, request)

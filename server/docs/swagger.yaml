@@ -368,7 +368,7 @@ paths:
         type: float
       - description: 商品图片
         in: formData
-        name: goods_image
+        name: goods_image[]
         type: file
       - description: 生产批号
         in: formData
@@ -543,7 +543,7 @@ paths:
         type: float
       - description: 商品图片
         in: formData
-        name: goods_image
+        name: goods_image[]
         type: file
       - description: 生产批号
         in: formData

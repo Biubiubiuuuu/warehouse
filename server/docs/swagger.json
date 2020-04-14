@@ -372,7 +372,7 @@
                     {
                         "type": "file",
                         "description": "商品图片",
-                        "name": "goods_image",
+                        "name": "goods_image[]",
                         "in": "formData"
                     },
                     {
@@ -650,7 +650,7 @@
                     {
                         "type": "file",
                         "description": "商品图片",
-                        "name": "goods_image",
+                        "name": "goods_image[]",
                         "in": "formData"
                     },
                     {

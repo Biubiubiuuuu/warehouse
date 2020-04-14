@@ -12,6 +12,7 @@ import (
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/cross"
 	err "github.com/Biubiubiuuuu/warehouse/server/middlewares/error"
 	"github.com/Biubiubiuuuu/warehouse/server/middlewares/jwt"
+	"github.com/Biubiubiuuuu/warehouse/server/middlewares/logger"
 	"github.com/gin-gonic/gin"
 	ginswagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -28,10 +29,13 @@ func Init() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.Default()
-	// 静态资源路径 配置信息为 /static 开头 或者 自定义
+	// 静态资源路径 /static 开头 或者 取自定义配置
+	//router.Static(configHelper.Static, "."+configHelper.Static)
 	router.Static("/static", "./static")
 	//允许跨域请求
 	router.Use(cross.Cors())
+	//记录日志
+	router.Use(logger.Logger())
 	InitAdmin(router)
 	InitUser(router)
 	//gin swaager

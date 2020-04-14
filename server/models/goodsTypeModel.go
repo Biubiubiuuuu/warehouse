@@ -24,8 +24,8 @@ type GoodsType struct {
 
 type GoodsImage struct {
 	ID              int64
-	GoodsImageFiles string `json:"goods_image_files"`                     // 商品图片路径
-	GoodsTypeID     int64  `gorm:"not null;unique;" json:"goods_type_id"` // 商品种类ID
+	GoodsImageFiles string `json:"goods_image_files"` // 商品图片路径
+	GoodsTypeID     int64  `json:"goods_type_id"`     // 商品种类ID
 }
 
 type GoodsTypeData struct {
@@ -40,9 +40,10 @@ func (g *GoodsType) AddGoodsType() error {
 }
 
 // 修改商品种类信息
-func (g *GoodsType) UpdateGoodsType(args map[string]interface{}) error {
+func (g *GoodsType) UpdateGoodsType(goodsImage []GoodsImage, args map[string]interface{}) error {
 	db := mysql.GetDB()
-	return db.Model(&g).Updates(args).Error
+	db.Model(&g).Association("GoodsImages").Replace(goodsImage)
+	return db.Model(&g).Update(args).Error
 }
 
 // 查看商品详情
@@ -64,6 +65,8 @@ func (g *GoodsType) DeleteGoodsTypes(ids []int64) error {
 			return errors.New("id is not 0")
 		}
 		g.ID = id
+		tx.Model(&g).Update("goods_state", "1")
+		tx.Model(&g).Association("GoodsImages").Clear()
 		if err := tx.Delete(&g).Error; err != nil {
 			tx.Rollback()
 			return err

@@ -20,6 +20,10 @@ func AddGoodsType(token string, images []string, g entity.AddGoodsType) (respons
 		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，管理员不存在"
 		return
 	}
+	if g.GoodsName == "" {
+		responseData.Message = msg.GetMsg(tcode.ADD_ERROR) + "，商品名不能为空"
+		return
+	}
 	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
 	var goodsImages []models.GoodsImage
 	for _, file := range images {
@@ -60,11 +64,16 @@ func UpdateGoodsType(token string, images []string, g entity.UpdateGoodsType) (r
 		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + ",商品ID不存在"
 		return
 	}
+	if goodsType.GoodsName == g.GoodsName {
+		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR) + ",商品名已存在"
+		return
+	}
 	goodsDate, _ := time.ParseInLocation("2006-01-02", g.GoodsDate, time.Local)
 	var goodsImages []models.GoodsImage
 	for _, file := range images {
 		goodsImage := models.GoodsImage{
 			GoodsImageFiles: file,
+			GoodsTypeID:     goodsType.ID,
 		}
 		goodsImages = append(goodsImages, goodsImage)
 	}
@@ -73,12 +82,11 @@ func UpdateGoodsType(token string, images []string, g entity.UpdateGoodsType) (r
 		"GoodsSpecs":       g.GoodsSpecs,
 		"GoodsUnitPrince":  g.GoodsUnitPrince,
 		"GoodsPrince ":     g.GoodsPrince,
-		"GoodsImage":       goodsImages,
 		"GoodsBatchNumber": g.GoodsBatchNumber,
 		"GoodsDate":        goodsDate,
 		"GoodsState":       g.GoodsState,
 	}
-	if err := goodsType.UpdateGoodsType(args); err != nil {
+	if err := goodsType.UpdateGoodsType(goodsImages, args); err != nil {
 		responseData.Message = msg.GetMsg(tcode.UPDATE_ERROR)
 		return
 	}

@@ -19,6 +19,7 @@ var (
 	DBMysqlTablePrefix string
 	JwtName            string
 	Version            string
+	Static             string
 	LogDir             string
 	ImageDir           string
 	MaxIdleConns       string
@@ -59,6 +60,7 @@ func LoadApp() {
 	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
 	JwtName = sec.Key("JWT_NAME").MustString("token")
 	Version = sec.Key("VERSION").MustString("1.0")
+	Static = sec.Key("STATIC").MustString("static/")
 	LogDir = sec.Key("LOGDIR").MustString("static/logger/")
 	ImageDir = sec.Key("IMAGEDIR").MustString("static/image/")
 }
