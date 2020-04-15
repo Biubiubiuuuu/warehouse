@@ -82,7 +82,7 @@ func InitAdmin(router *gin.Engine) {
 		apiAdmin.GET("queryAdmins", adminController.QueryAdmins)
 		apiAdmin.POST("addAdmin", adminController.AddAdmin)
 		apiAdmin.DELETE("deleteAdmin", adminController.DeleteAdmin)
-		apiAdmin.DELETE("deleteAdmins", adminController.DeleteAdmins)
+		apiAdmin.POST("deleteAdmins", adminController.DeleteAdmins)
 
 		// 商品种类curd
 		apiGoodsType := apiAdmin.Group("/goodsType")

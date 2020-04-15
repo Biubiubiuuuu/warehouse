@@ -72,7 +72,7 @@ func DeleteAdmin(c *gin.Context) {
 // @Produce  json
 // @Param body body entity.DeleteIds true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/deleteAdmins [DELETE]
+// @Router /api/v1/admin/deleteAdmins [POST]
 // @Security ApiKeyAuth
 func DeleteAdmins(c *gin.Context) {
 	responseData := entity.ResponseData{}
@@ -92,7 +92,7 @@ func DeleteAdmins(c *gin.Context) {
 // @Produce  json
 // @Param body body entity.UpdatePass true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/updateAdminPass [UPDATE]
+// @Router /api/v1/admin/updateAdminPass [PUT]
 // @Security ApiKeyAuth
 func UpdateAdminPass(c *gin.Context) {
 	responseData := entity.ResponseData{}
