@@ -1,0 +1,206 @@
+========================================
+开始时间：2020-04-15 10:09:36.4104745 +0800 CST m=+31.270410501
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:09:36.4164596 +0800 CST m=+31.276395601
+========================================
+========================================
+开始时间：2020-04-15 10:18:23.2498064 +0800 CST m=+8.792899501
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:18:23.2557926 +0800 CST m=+8.798885701
+========================================
+========================================
+开始时间：2020-04-15 10:18:38.6234505 +0800 CST m=+24.166543601
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:18:38.6314297 +0800 CST m=+24.174522801
+========================================
+========================================
+开始时间：2020-04-15 10:18:44.9329417 +0800 CST m=+30.476034801
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:18:44.9389238 +0800 CST m=+30.482016901
+========================================
+========================================
+开始时间：2020-04-15 10:19:55.472848 +0800 CST m=+4.915567001
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:19:55.529697 +0800 CST m=+4.972416001
+========================================
+========================================
+开始时间：2020-04-15 10:27:17.0577879 +0800 CST m=+11.786404001
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:27:17.1345833 +0800 CST m=+11.863199401
+========================================
+========================================
+开始时间：2020-04-15 10:36:47.9688118 +0800 CST m=+12.947075701
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：{
+  "password": "1",
+  "tel": "1"
+}
+responseBody：
+结束时间：2020-04-15 10:36:48.0715419 +0800 CST m=+13.049805801
+========================================
+========================================
+开始时间：2020-04-15 10:38:58.0488911 +0800 CST m=+4.598438701
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：{
+  "password": "1",
+  "tel": "1"
+}
+responseBody：
+结束时间：2020-04-15 10:38:58.0588676 +0800 CST m=+4.608415201
+========================================
+========================================
+开始时间：2020-04-15 10:41:10.2797005 +0800 CST m=+7.228214701
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：{
+  "password": "1",
+  "tel": "1"
+}
+responseBody：
+结束时间：2020-04-15 10:41:10.2797005 +0800 CST m=+7.228214701
+========================================
+========================================
+开始时间：2020-04-15 10:42:18.881834 +0800 CST m=+3.854426501
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：{
+  "password": "1",
+  "tel": "1"
+}
+responseBody：
+结束时间：2020-04-15 10:42:19.1062379 +0800 CST m=+4.078830401
+========================================
+========================================
+开始时间：2020-04-15 10:48:17.8532484 +0800 CST m=+5.483207501
+请求URL：127.0.0.1:8060/api/v1/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：{
+    "password": "1",
+    "tel": "1"
+}
+responseBody：
+结束时间：2020-04-15 10:48:17.8602297 +0800 CST m=+5.490188801
+========================================
+========================================
+开始时间：2020-04-15 10:48:40.5167071 +0800 CST m=+28.146666201
+请求URL：127.0.0.1:8060/api/v1/admin/queryAdmins?pageSize=3&page=4
+method：GET
+Content-Type：
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：
+结束时间：2020-04-15 10:48:40.5167071 +0800 CST m=+28.146666201
+========================================
+========================================
+开始时间：2020-04-15 10:49:55.363396 +0800 CST m=+3.578779001
+请求URL：127.0.0.1:8060/api/v1/admin/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+responseBody：
+结束时间：2020-04-15 10:49:55.3723706 +0800 CST m=+3.587753601
+========================================
+========================================
+开始时间：2020-04-15 10:52:42.1404373 +0800 CST m=+5.669643101
+请求URL：127.0.0.1:8060/api/v1/admin/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+{
+    "password": "string",
+    "username": "string"
+}
+responseBody：
+{"status":false,"data":null,"message":"用户名或密码错误"}
+结束时间：2020-04-15 10:52:42.4296628 +0800 CST m=+5.958868601
+========================================
+========================================
+开始时间：2020-04-15 10:53:18.8117592 +0800 CST m=+42.340965001
+请求URL：127.0.0.1:8060/api/v1/admin/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+{
+    "password": "123456",
+    "username": "admin"
+}
+responseBody：
+{"status":true,"data":{"user":{"id":1,"created_at":"2020-04-11T12:18:23+08:00","updated_at":"2020-04-15T10:53:18.863618+08:00","deleted_at":null,"username":"admin","ip":"127.0.0.1","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIxMjM0NTYiLCJleHAiOjE1ODY5Mjk5OTgsImlzcyI6ImdvbGFuZyJ9.YpqZiszviUCPGfOjyhVhibzLIkUOwEHakkdI-0KqNMA","administrator":"Y","uuid":"42da56a2-7ec4-11ea-9e08-a81e848592fb"}},"message":"登录成功"}
+结束时间：2020-04-15 10:53:18.9543757 +0800 CST m=+42.483581501
+========================================
+========================================
+开始时间：2020-04-15 10:57:38.1094142 +0800 CST m=+23.280943801
+请求URL：127.0.0.1:8060/api/v1/admin/login
+method：POST
+Content-Type：application/json
+Authorization：
+请求IP：127.0.0.1
+postData：
+{
+	"password": "123456",
+	"username": "admin"
+}
+responseBody：
+{"status":true,"data":{"user":{"id":1,"created_at":"2020-04-11T12:18:23+08:00","updated_at":"2020-04-15T10:57:38.1393482+08:00","deleted_at":null,"username":"admin","ip":"127.0.0.1","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIxMjM0NTYiLCJleHAiOjE1ODY5MzAyNTgsImlzcyI6ImdvbGFuZyJ9.ikTHeFx_hGIvnCZvfzdKZNPxaSLoFK8RCBhu8n2cqg0","administrator":"Y","uuid":"dd65bcf5-7ec4-11ea-9f79-a81e848592fb"}},"message":"登录成功"}
+结束时间：2020-04-15 10:57:38.2241085 +0800 CST m=+23.395638101
+========================================

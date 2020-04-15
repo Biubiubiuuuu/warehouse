@@ -2,7 +2,9 @@ package logger
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -32,23 +34,46 @@ func (w bodyLogWriter) WriteString(s string) (int, error) {
 func Logger() gin.HandlerFunc {
 	go handleLogChannel()
 	return func(c *gin.Context) {
+		// 记录请求的url、method、header、postData、responseData
 		bodyLogWriter := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = bodyLogWriter
 		// 响应接收时间
 		stratTime := time.Now().String()
-		c.Next()
-		responseBody := bodyLogWriter.body.String()
-		// 记录请求的url、method、header、postData、responseData
 		request := c.Request
+		var bodyBytes []byte
+		var postData string
+		if request.Body != nil {
+			bodyBytes, _ = ioutil.ReadAll(request.Body)
+		}
+		var postDataJson bytes.Buffer
+		if err := json.Indent(&postDataJson, []byte(bodyBytes), "", "\t"); err != nil {
+			postData = string(bodyBytes)
+		} else {
+			postData = postDataJson.String()
+		}
+		request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		// url
 		url := request.Host + request.URL.String()
+		// method
 		method := request.Method
-		ContentType := request.Header["Content-Type"]
-		Authorization := request.Header["Authorization"]
-
-		// 响应返回时间
+		// Content-Type
+		contentTypeArr := request.Header["Content-Type"]
+		var contentType string
+		if len(contentTypeArr) > 0 {
+			contentType = contentTypeArr[0]
+		}
+		// Authorization
+		authorizationArr := request.Header["Authorization"]
+		var authorization string
+		if len(authorizationArr) > 0 {
+			authorization = authorizationArr[0]
+		}
 		c.Next()
+		// responseData
+		responseBody := bodyLogWriter.body.String()
+		// 响应返回时间
 		endTime := time.Now().String()
-		log := fmt.Sprintf("开始时间：%s\r\n请求URL：%s\r\nmethod：%s\r\n%s：%s\r\n%s：%s\r\n请求IP：%s\r\npostData：%s\r\nresponseBody：%s\r\n结束时间：%s\r\n", stratTime, url, method, "Content-Type", ContentType[0], "Authorization", Authorization[0], c.ClientIP(), "", responseBody, endTime)
+		log := fmt.Sprintf("开始时间：%s\r\n请求URL：%s\r\nmethod：%s\r\n%s：%s\r\n%s：%s\r\n请求IP：%s\r\npostData：\r\n%s\r\nresponseBody：\r\n%s\r\n结束时间：%s\r\n", stratTime, url, method, "Content-Type", contentType, "Authorization", authorization, c.ClientIP(), postData, responseBody, endTime)
 		logChannel <- log
 	}
 }

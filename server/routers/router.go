@@ -29,13 +29,13 @@ func Init() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.Default()
+	//记录日志
+	router.Use(logger.Logger())
 	// 静态资源路径 /static 开头 或者 取自定义配置
 	//router.Static(configHelper.Static, "."+configHelper.Static)
 	router.Static("/static", "./static")
 	//允许跨域请求
 	router.Use(cross.Cors())
-	//记录日志
-	router.Use(logger.Logger())
 	InitAdmin(router)
 	InitUser(router)
 	//gin swaager
