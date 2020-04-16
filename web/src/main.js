@@ -11,17 +11,32 @@ import store from '@/store/index'
 import router from './router'
 import menuHeader from '@/menu/header'
 import menuAside from '@/menu/aside'
-import { frameInRoutes } from '@/router/routes'
-
+import {
+  frameInRoutes
+} from '@/router/routes'
+import util from '@/libs/util.js'
 // 核心插件
 Vue.use(d2Admin)
 
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    util.cookies.set('token', '')
+  }
+  var user = util.cookies.get('token')
+  if (!user && to.path !== '/login') {
+    next({
+      path: '/login',
+    })
+  } else {
+    next()
+  }
+})
 new Vue({
   router,
   store,
   i18n,
   render: h => h(App),
-  created () {
+  created() {
     // 处理路由 得到每一级的路由设置
     this.$store.commit('d2admin/page/init', frameInRoutes)
     // 设置顶栏菜单
@@ -31,7 +46,7 @@ new Vue({
     // 初始化菜单搜索功能
     this.$store.commit('d2admin/search/init', menuHeader)
   },
-  mounted () {
+  mounted() {
     // 展示系统信息
     this.$store.commit('d2admin/releases/versionShow')
     // 用户登录后从数据库加载一系列的设置

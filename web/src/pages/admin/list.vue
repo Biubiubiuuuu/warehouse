@@ -46,7 +46,7 @@ export default {
       all: [],
       pagination: {
         currentPage: 1,
-        pageSize: 15,
+        pageSize: 7,
         total: 0,
       },
       columns: [

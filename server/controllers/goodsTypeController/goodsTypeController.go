@@ -207,7 +207,7 @@ func DeleteGoodsType(c *gin.Context) {
 // @Produce  json
 // @Param body body entity.DeleteIds true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/goodsType/deleteGoodsTypes [DELETE]
+// @Router /api/v1/admin/goodsType/deleteGoodsTypes [POST]
 // @Security ApiKeyAuth
 func DeleteGoodsTypes(c *gin.Context) {
 	responseData := entity.ResponseData{}

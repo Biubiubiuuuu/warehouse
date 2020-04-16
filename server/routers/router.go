@@ -89,7 +89,7 @@ func InitAdmin(router *gin.Engine) {
 		apiGoodsType.POST("addGoodsType", goodsTypeController.AddGoodsType)
 		apiGoodsType.PUT("updateGoodsType", goodsTypeController.UpdateGoodsType)
 		apiGoodsType.DELETE("deleteGoodsType", goodsTypeController.DeleteGoodsType)
-		apiGoodsType.DELETE("deleteGoodsTypes", goodsTypeController.DeleteGoodsTypes)
+		apiGoodsType.POST("deleteGoodsTypes", goodsTypeController.DeleteGoodsTypes)
 
 		// 商品库存curd
 		apigoodsStock := apiAdmin.Group("/goodsStock")
