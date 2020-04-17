@@ -65,9 +65,7 @@ func (g *GoodsType) DeleteGoodsTypes(ids []int64) error {
 			return errors.New("id is not 0")
 		}
 		g.ID = id
-		tx.Model(&g).Update("goods_state", "1")
-		tx.Model(&g).Association("GoodsImages").Clear()
-		if err := tx.Delete(&g).Error; err != nil {
+		if err := tx.Model(&g).Update("goods_state", "1").Error; err != nil {
 			tx.Rollback()
 			return err
 		}

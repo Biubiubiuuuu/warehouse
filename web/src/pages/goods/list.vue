@@ -10,29 +10,31 @@
       :rowHandle="rowHandle"
       :pagination="pagination"
       :form-options="formOptions"
+      :add-rules="addRules"
       @selection-change="selsChange"
       @row-remove="handleRowRemove"
       @pagination-current-change="paginationCurrentChange"
       @row-add="handleRowAdd"
       @dialog-cancel="handleDialogCancel"
     >
-      <el-button slot="header" style="margin-bottom: 5px" @click="addRow"
-        >新增</el-button
-      >
+      <el-button
+        slot="header"
+        style="margin-bottom: 5px"
+        @click="addRow"
+      >新增</el-button>
       <el-button
         slot="header"
         style="margin-bottom: 5px"
         @click="handleDelete(sels.map((i) => i.id))"
-        >批量删除</el-button
-      >
+      >批量删除</el-button>
     </d2-crud>
   </d2-container>
 </template>
 
 <script>
-import Vue from 'vue'
 import moment from 'moment'
 import D2Crud from '@d2-projects/d2-crud'
+import image from "./image"
 import {
   QueryGoodsTypesByLimitOffset,
   DeleteGoodsType,
@@ -40,19 +42,9 @@ import {
   AddGoodsType,
 } from '@api/goods'
 
-Vue.component('custom-input', {
-  props: ['value'],
-  template: `
-    <input
-      v-bind:value="value"
-      v-on:input="$emit('input', $event.target.value)"
-    >
-  `,
-})
-
 export default {
   components: { D2Crud },
-  data() {
+  data () {
     return {
       sels: [],
       all: [],
@@ -66,6 +58,13 @@ export default {
           title: 'ID',
           key: 'id',
           width: '50px',
+        },
+        {
+          title: '图片',
+          key: 'goods_images',
+          component: {
+            name: image
+          }
         },
         {
           title: '商品名称',
@@ -90,7 +89,7 @@ export default {
         {
           title: '商品状态',
           key: 'goods_state',
-          formatter: function(row) {
+          formatter: function (row) {
             if (row.goods_state == undefined) {
               return ''
             }
@@ -101,11 +100,19 @@ export default {
               return '在售'
             }
           },
+          filters: [
+            { text: '已下架', value: '1' },
+            { text: '在售', value: '2' }
+          ],
+          filterMethod (value, row) {
+            return row.goods_state === value
+          },
+          filterPlacement: 'bottom-end'
         },
         {
           title: '生产时间',
           key: 'goods_date',
-          formatter: function(row) {
+          formatter: function (row) {
             if (row.goods_date == undefined) {
               return ''
             }
@@ -115,7 +122,7 @@ export default {
         {
           title: '创建时间',
           key: 'created_at',
-          formatter: function(row) {
+          formatter: function (row) {
             if (row.created_at == undefined) {
               return ''
             }
@@ -143,13 +150,18 @@ export default {
         labelPosition: 'left',
         saveLoading: false,
       },
+      addRules: {
+        goods_name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+        goods_prince: [{ required: true, message: '请输入销售价', trigger: 'blur' }],
+        goods_unitprince: [{ required: true, message: '请输入成本价', trigger: 'blur' }]
+      }
     }
   },
-  mounted() {
+  mounted () {
     this.fetchData()
   },
   methods: {
-    addRow() {
+    addRow () {
       this.$refs.d2Crud.showDialog({
         mode: 'add',
         template: {
@@ -197,19 +209,16 @@ export default {
           goods_image: {
             title: '商品图片',
             value: '',
-            component: {
-              name: 'custom-input',
-            },
           },
         },
       })
     },
-    // 单选删除
-    handleRowRemove({ index, row }, done) {
+    // 单选下架
+    handleRowRemove ({ index, row }, done) {
       DeleteGoodsType(row.id)
         .then((res) => {
           this.$message({
-            message: '删除成功',
+            message: '下架成功',
             type: 'success',
           })
           this.fetchData()
@@ -219,13 +228,13 @@ export default {
           Promise.reject(err)
         })
     },
-    selsChange(sels) {
+    selsChange (sels) {
       this.sels = sels
     },
-    // 多选删除
-    handleDelete(idArray) {
+    // 多选下架
+    handleDelete (idArray) {
       if (idArray.length > 0) {
-        this.$confirm('确认删除吗？', '提示', {
+        this.$confirm('确认下架吗？', '提示', {
           confirmButtonText: '确认',
           cancelButtonText: '取消',
           type: 'warning',
@@ -236,7 +245,7 @@ export default {
             })
               .then((res) => {
                 this.$message({
-                  message: '删除成功',
+                  message: '下架成功',
                   type: 'success',
                 })
                 this.fetchData()
@@ -248,23 +257,23 @@ export default {
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消批量删除',
+              message: '已取消批量下架',
             })
           })
       } else {
         this.$message({
-          message: '请选择要删除的数据',
+          message: '请选择要下架的数据',
           type: 'error',
         })
       }
     },
     // 分页
-    paginationCurrentChange(currentPage) {
+    paginationCurrentChange (currentPage) {
       this.pagination.currentPage = currentPage
       this.fetchData()
     },
     // 获取数据
-    fetchData() {
+    fetchData () {
       QueryGoodsTypesByLimitOffset(
         this.pagination.pageSize,
         this.pagination.currentPage
@@ -278,7 +287,7 @@ export default {
         })
     },
     // 新增
-    handleRowAdd(row, done) {
+    handleRowAdd (row, done) {
       this.formOptions.saveLoading = true
       AddGoodsType({
         username: row.username,
@@ -299,7 +308,7 @@ export default {
         })
       this.formOptions.saveLoading = false
     },
-    handleDialogCancel(done) {
+    handleDialogCancel (done) {
       this.$message({
         message: '取消保存',
         type: 'warning',
